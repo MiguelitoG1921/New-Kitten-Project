@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff8ee">
+  <title>Little Nuzzle — pixel kittens</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #493b46;
+      --muted: #887984;
+      --pink: #e995a8;
+      --paper: #fffaf2;
+      --pixel: 6px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      font-family: "Trebuchet MS", "Arial Rounded MT Bold", system-ui, sans-serif;
+      background-color: #fff8ee;
+      background-image: radial-gradient(#efdcca 1px, transparent 1px);
+      background-size: 22px 22px;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    main { width: min(100%, 680px); text-align: center; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border: 2px solid #f1dfcf;
+      border-radius: 999px;
+      background: #fffdf8;
+      color: #987f82;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 18px 0 8px;
+      font-size: clamp(2.4rem, 8vw, 4.6rem);
+      line-height: .98;
+      letter-spacing: -.065em;
+    }
+    h1 span { color: #df879c; }
+    .intro { margin: 14px 0 28px; color: var(--muted); font-size: clamp(1rem, 2.7vw, 1.15rem); }
+    .scene {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 370px;
+      overflow: hidden;
+      border: 3px solid #f0dfcf;
+      border-radius: 28px;
+      background: linear-gradient(#fffdf8 0 72%, #f8eddf 72%);
+      box-shadow: 0 12px 0 #ead9c9, 0 24px 50px #775d4a13;
+      isolation: isolate;
+    }
+    .sun { position: absolute; top: 34px; right: 11%; width: 56px; height: 56px; border-radius: 50%; background: #ffe8a9; opacity: .8; }
+    .cloud { position: absolute; top: 62px; left: 12%; width: 68px; height: 16px; border-radius: 20px; background: #f7e9e2; }
+    .cloud::before, .cloud::after { content: ""; position: absolute; bottom: 4px; width: 25px; height: 25px; border-radius: 50%; background: inherit; }
+    .cloud::before { left: 12px; } .cloud::after { left: 31px; width: 18px; height: 18px; }
+    .sparkle { position: absolute; color: #e7b96d; font-size: 22px; animation: twinkle 2.4s ease-in-out infinite; }
+    .sparkle.one { top: 33%; left: 16%; } .sparkle.two { top: 49%; right: 15%; animation-delay: .8s; }
+    .treat-layer { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+    .treat-piece { position: absolute; bottom: 51px; width: 34px; opacity: 1; filter: drop-shadow(0 3px 1px #84664a30); }
+    .treat-piece svg { width: 100%; }
+    .treat-piece.is-new { animation: treat-toss .72s cubic-bezier(.2,.7,.25,1) forwards; }
+    .treat-piece.is-eaten { animation: treat-eaten .32s ease-in forwards; }
+    .kitten-wrap { position: relative; z-index: 1; width: min(78%, 310px); cursor: pointer; transform-origin: 50% 72%; transition: transform .25s ease; }
+    .kitten-wrap:hover, .kitten-wrap:focus-visible { transform: translateY(-5px) scale(1.035); outline: none; }
+    svg { display: block; width: 100%; height: auto; overflow: visible; image-rendering: pixelated; shape-rendering: crispEdges; }
+    .cat { transform-origin: 150px 190px; transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+    .head-group { transform-origin: 150px 190px; }
+    .scene.nibbling .head-group { animation: nibble 1.1s ease-in-out .62s infinite; }
+    .kitten-wrap:hover .cat, .kitten-wrap:focus-visible .cat { transform: rotate(-3deg) translateX(4px); }
+    .eye { transition: opacity .15s ease; }
+    .nuzzle-eyes, .nuzzle-mouth { opacity: 0; transition: opacity .16s ease; }
+    .smile { transition: opacity .16s ease; }
+    .kitten-wrap:hover .eye, .kitten-wrap:focus-visible .eye { opacity: 0; }
+    .kitten-wrap:hover .smile, .kitten-wrap:focus-visible .smile { opacity: 0; }
+    .kitten-wrap:hover .nuzzle-eyes, .kitten-wrap:focus-visible .nuzzle-eyes,
+    .kitten-wrap:hover .nuzzle-mouth, .kitten-wrap:focus-visible .nuzzle-mouth { opacity: 1; }
+    .purr { transform-origin: 150px 245px; animation: purr 2.5s ease-in-out infinite; }
+    .kitten-wrap:hover .purr, .kitten-wrap:focus-visible .purr { animation-duration: .42s; }
+    .caption { position: absolute; z-index: 2; bottom: 17px; left: 0; right: 0; color: #a39391; font-size: 12px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; pointer-events: none; }
+    .controls { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 28px; }
+    button {
+      min-height: 46px; padding: 0 19px; border: 2px solid #e9d6c8; border-radius: 14px;
+      color: var(--ink); background: #fffdf8; font: inherit; font-weight: 800; cursor: pointer;
+      box-shadow: 0 4px 0 #e9d6c8; transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+    }
+    button:hover { background: #fff1ed; }
+    button:active { transform: translateY(3px); box-shadow: 0 1px 0 #e9d6c8; }
+    button:focus-visible, .kitten-wrap:focus-visible { outline: 3px solid #dc91a2; outline-offset: 5px; }
+    .timer { min-width: 72px; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+    .sound-row { margin-top: 18px; }
+    #treat { border-color: #ebc983; background: #fff5d9; box-shadow: 0 4px 0 #e7d4aa; }
+    #treat:hover { background: #ffedc1; }
+    #treat[aria-pressed="true"] { background: #ffe9b2; }
+    .treat-note { min-height: 1.2em; margin: 8px 0 0; color: #a47e52; font-size: 13px; }
+    #sound-toggle[aria-pressed="true"] { border-color: #e3b0ba; background: #fff1ed; color: #9b596a; }
+    .hint { margin: 23px 0 0; color: #a39291; font-size: 13px; }
+    @keyframes purr { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+    @keyframes twinkle { 0%,100% { opacity: .45; transform: scale(.85) rotate(0); } 50% { opacity: 1; transform: scale(1.15) rotate(12deg); } }
+    @keyframes treat-toss { 0% { opacity: 0; transform: translate(-115px, -145px) rotate(-170deg) scale(.7); } 12% { opacity: 1; } 70% { transform: translate(-18px, 7px) rotate(18deg) scale(1.08); } 86% { transform: translate(0, -5px) rotate(-8deg) scale(.96); } 100% { opacity: 1; transform: translate(0, 0) rotate(0) scale(1); } }
+    @keyframes treat-eaten { to { opacity: 0; transform: translateY(5px) scale(.2) rotate(25deg); } }
+    @keyframes nibble { 0%,100% { transform: translateY(0) rotate(0); } 25%,68% { transform: translateY(18px) rotate(5deg); } 82% { transform: translateY(13px) rotate(2deg); } }
+    @media (max-width: 480px) { .scene { min-height: 320px; border-radius: 22px; } .sun { width: 42px; height: 42px; } .cloud { transform: scale(.8); transform-origin: top left; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow"><span aria-hidden="true">✦</span> a tiny pocket of calm <span aria-hidden="true">✦</span></div>
+    <h1>Little <span>Nuzzle</span></h1>
+    <p class="intro">A new tiny friend, just for you.</p>
+
+    <section class="scene" id="scene" aria-label="A changing pixel kitten">
+      <div class="sun" aria-hidden="true"></div><div class="cloud" aria-hidden="true"></div>
+      <span class="sparkle one" aria-hidden="true">✦</span><span class="sparkle two" aria-hidden="true">✧</span>
+      <div class="kitten-wrap" id="kitten" role="button" tabindex="0" aria-label="Nuzzle the kitten">
+        <svg viewBox="0 0 300 300" role="img" aria-labelledby="cat-title cat-desc" xmlns="http://www.w3.org/2000/svg">
+          <title id="cat-title">A pixel kitten</title><desc id="cat-desc">A small, soft-looking pixel kitten. Hover or focus to make it nuzzle.</desc>
+          <g class="purr" fill="#dfbda2" opacity=".55"><rect x="69" y="252" width="162" height="12"/><rect x="87" y="264" width="126" height="6"/></g>
+          <g class="cat" id="cat-art">
+            <g id="body"></g>
+            <g class="head-group">
+              <g id="ears"></g>
+              <g id="head"></g>
+              <g id="face"></g>
+              <g id="accessory"></g>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="treat-layer" id="treat-layer" aria-hidden="true"></div>
+      <div class="caption" id="cat-name" aria-live="polite">Mochi · the daydreamer</div>
+    </section>
+
+    <div class="controls">
+      <button id="prev" type="button" aria-label="Show previous kitten">← <span>Previous</span></button>
+      <span class="timer" id="timer" aria-live="polite">Next in 15s</span>
+      <button id="next" type="button">Next kitten <span aria-hidden="true">→</span></button>
+    </div>
+    <div class="sound-row"><button id="treat" type="button" aria-pressed="false">♡ Give a little treat</button><p class="treat-note" id="treat-note" aria-live="polite"></p></div>
+    <div class="sound-row"><button id="sound-toggle" type="button" aria-pressed="false">♫ Turn sounds on</button></div>
+    <p class="hint" id="hint">Turn on sounds for kitten voices and a gentle flute tune ♡</p>
+  </main>
+  <script>
+    const kittens = [
+      { name: "Mochi · the daydream cartographer", fur: "#f3c7bd", shade: "#df9f9c", light: "#ffe5d9", inner: "#c77883", nose: "#d8798d", eyes: "#57434b", accent: "#d9889b", kind: "bow", voice: { pitch: [620, 770], length: [0.48, 0.72], doubleChance: 0.08, purrChance: 0.48, purrPitch: 118 } },
+      { name: "Pippin · the cloud's assistant", fur: "#e8e2d8", shade: "#c9c0b8", light: "#fff8e9", inner: "#db9e9e", nose: "#cf8291", eyes: "#536b72", accent: "#a8c8c2", kind: "scarf", voice: { pitch: [740, 940], length: [0.24, 0.38], doubleChance: 0.7, purrChance: 0.2, purrPitch: 142 } },
+      { name: "Peaches · the sunbeam collector", fur: "#efbd7e", shade: "#d89659", light: "#ffe2a8", inner: "#c97875", nose: "#ce7785", eyes: "#654638", accent: "#e9af67", kind: "flower", voice: { pitch: [560, 830], length: [0.28, 0.52], doubleChance: 0.42, purrChance: 0.36, purrPitch: 132 } },
+      { name: "Biscuit · the blanket architect", fur: "#b8a0c8", shade: "#9478aa", light: "#e0cbe9", inner: "#ce91a2", nose: "#c9758c", eyes: "#51465f", accent: "#ddabc3", kind: "hat", voice: { pitch: [360, 510], length: [0.52, 0.82], doubleChance: 0.12, purrChance: 0.72, purrPitch: 104 } },
+      { name: "Juniper · the fern detective", fur: "#b7cba8", shade: "#849d7c", light: "#e2edcf", inner: "#c98791", nose: "#bd7183", eyes: "#435c4a", accent: "#8eaf86", kind: "flower", voice: { pitch: [510, 680], length: [0.35, 0.62], doubleChance: 0.25, purrChance: 0.55, purrPitch: 112 } },
+      { name: "Marmalade · tiny train conductor", fur: "#e9a66e", shade: "#bf704d", light: "#ffdfb4", inner: "#c87979", nose: "#bd6276", eyes: "#62443b", accent: "#bb6570", kind: "hat", voice: { pitch: [430, 590], length: [0.38, 0.58], doubleChance: 0.62, purrChance: 0.31, purrPitch: 126 } },
+      { name: "Tinsel · the midnight astronomer", fur: "#8f9fbe", shade: "#626f96", light: "#d8def1", inner: "#d29bad", nose: "#c57c96", eyes: "#3b4562", accent: "#f0d28c", kind: "bow", voice: { pitch: [690, 860], length: [0.3, 0.52], doubleChance: 0.18, purrChance: 0.66, purrPitch: 108 } },
+      { name: "Pickle · champion puddle inspector", fur: "#c7b66f", shade: "#928747", light: "#f2e6a9", inner: "#c17d87", nose: "#b9697b", eyes: "#50533b", accent: "#88aaa1", kind: "scarf", voice: { pitch: [390, 570], length: [0.48, 0.7], doubleChance: 0.44, purrChance: 0.4, purrPitch: 116 } },
+      { name: "Velvet · the opera-house usher", fur: "#bb8298", shade: "#885c79", light: "#f0c9d1", inner: "#e3a4a7", nose: "#ca718b", eyes: "#523c54", accent: "#e2bf74", kind: "bow", voice: { pitch: [540, 760], length: [0.58, 0.86], doubleChance: 0.16, purrChance: 0.78, purrPitch: 98 } },
+      { name: "Nori · the brave teacup sailor", fur: "#768f92", shade: "#506d75", light: "#c9ded4", inner: "#d19aa4", nose: "#c8778b", eyes: "#344b54", accent: "#e1b56e", kind: "scarf", voice: { pitch: [620, 820], length: [0.26, 0.48], doubleChance: 0.76, purrChance: 0.26, purrPitch: 136 } },
+      { name: "Dumpling · the nap-time philosopher", fur: "#e2c49e", shade: "#b69777", light: "#fff0d4", inner: "#d49ca0", nose: "#c87b88", eyes: "#5b4d45", accent: "#b9a6c8", kind: "hat", voice: { pitch: [330, 470], length: [0.62, 0.92], doubleChance: 0.08, purrChance: 0.86, purrPitch: 92 } },
+      { name: "Fable · the library's quiet dragon", fur: "#a99ac4", shade: "#776c9c", light: "#e4d8ed", inner: "#d094a5", nose: "#c2738b", eyes: "#49415f", accent: "#c78ca2", kind: "flower", voice: { pitch: [470, 660], length: [0.46, 0.72], doubleChance: 0.32, purrChance: 0.57, purrPitch: 110 } },
+      { name: "Waffles · the breakfast magician", fur: "#d49c65", shade: "#a86e48", light: "#f7d49b", inner: "#c97d7c", nose: "#c56c80", eyes: "#594235", accent: "#f2d381", kind: "bow", voice: { pitch: [580, 790], length: [0.28, 0.5], doubleChance: 0.7, purrChance: 0.39, purrPitch: 124 } },
+      { name: "Saffron · the tiny weather witch", fur: "#d9adbd", shade: "#aa829b", light: "#f5dce0", inner: "#c27b8d", nose: "#bd6c80", eyes: "#59465a", accent: "#e8c26d", kind: "hat", voice: { pitch: [720, 960], length: [0.22, 0.4], doubleChance: 0.55, purrChance: 0.34, purrPitch: 140 } },
+      { name: "Cricket · the pocket-sized drummer", fur: "#9eb6a0", shade: "#6e8a78", light: "#d8e8cd", inner: "#ce8c96", nose: "#c06f82", eyes: "#3d5949", accent: "#dca8a5", kind: "scarf", voice: { pitch: [480, 700], length: [0.2, 0.3], doubleChance: 0.9, purrChance: 0.22, purrPitch: 132 } },
+      { name: "Bluebell · the moonlit mail carrier", fur: "#a8c4d5", shade: "#718fa9", light: "#e0eff0", inner: "#d69aa4", nose: "#c7798d", eyes: "#40596a", accent: "#ebcd83", kind: "flower", voice: { pitch: [650, 880], length: [0.34, 0.6], doubleChance: 0.35, purrChance: 0.61, purrPitch: 106 } }
+    ];
+    const $ = (id) => document.getElementById(id);
+    const NS = "http://www.w3.org/2000/svg";
+    let index = 0;
+    let seconds = 15;
+    let switchTimer;
+    let audioContext;
+    let soundEnabled = false;
+    let lastMeowAt = 0;
+    let musicBus;
+    let melodyTimer;
+    let treatTimer;
+    let treatStopTimer;
+    let activeTreat;
+    const treats = [];
+    function rect(parent, x, y, w, h, fill, extra = {}) {
+      const el = document.createElementNS(NS, "rect");
+      for (const [key, value] of Object.entries({ x, y, width: w, height: h, fill, ...extra })) el.setAttribute(key, value);
+      parent.appendChild(el); return el;
+    }
+    function path(parent, d, fill, extra = {}) {
+      const el = document.createElementNS(NS, "path");
+      el.setAttribute("d", d); el.setAttribute("fill", fill);
+      for (const [key, value] of Object.entries(extra)) el.setAttribute(key, value);
+      parent.appendChild(el); return el;
+    }
+    function draw(cat) {
+      ["ears", "body", "head", "face", "accessory"].forEach(id => $(id).replaceChildren());
+      const ears = $("ears"), body = $("body"), head = $("head"), face = $("face"), acc = $("accessory");
+      // Pixel-cut ear silhouettes and inset ear pixels.
+      path(ears, "M78 120V72h12V60h24v12h12v48h-12v12H90v-12z", cat.shade);
+      path(ears, "M84 114V78h12V72h12v6h12v30h-12v12H96v-12z", cat.fur);
+      path(ears, "M96 102V84h12v6h12v18h-12v6h-6v-12z", cat.inner);
+      path(ears, "M174 120V72h12V60h24v12h12v48h-12v12h-24v-12z", cat.shade);
+      path(ears, "M180 114V78h12v-6h12v6h12v30h-12v12h-12v-12z", cat.fur);
+      path(ears, "M180 108V90h12v-6h12v18h-12v12h-6v-6z", cat.inner);
+      // Soft little loaf body, paws, and tail.
+      path(body, "M78 206v-18h12v-12h24v-10h72v10h24v12h12v18h-12v24h-12v12H90v-12H78z", cat.shade);
+      path(body, "M84 206v-18h12v-12h24v-8h60v8h24v12h12v18h-12v18h-12v12H96v-12H84z", cat.fur);
+      rect(body, 108, 218, 24, 18, cat.light); rect(body, 168, 218, 24, 18, cat.light);
+      path(body, "M68 210h14v18H68v12H56v-12h12z", cat.shade);
+      path(body, "M68 210h12v18H68v12H58v-12h10z", cat.fur);
+      // Squared-round head.
+      path(head, "M78 114h12V96h18V84h84v12h18v18h12v60h-12v18h-18v12h-84v-12H90v-18H78z", cat.shade);
+      path(head, "M84 114h12V96h18V90h72v6h18v18h12v54h-12v18h-18v12h-72v-12H96v-18H84z", cat.fur);
+      // Forehead highlight and cheek pixels.
+      rect(head, 108, 102, 24, 6, cat.light); rect(head, 102, 108, 6, 12, cat.light);
+      rect(head, 90, 156, 24, 12, cat.light, { opacity: ".55" }); rect(head, 186, 156, 24, 12, cat.light, { opacity: ".55" });
+      // Tiny markings vary with the coat.
+      if (index === 1) { rect(head, 96, 120, 6, 24, cat.shade); rect(head, 198, 126, 6, 24, cat.shade); rect(head, 138, 96, 6, 12, cat.shade); }
+      if (index === 2) { rect(head, 108, 126, 6, 18, cat.shade); rect(head, 186, 114, 6, 18, cat.shade); rect(head, 144, 96, 12, 6, cat.shade); }
+      if (index === 3) { rect(head, 102, 126, 6, 24, cat.shade); rect(head, 192, 138, 6, 18, cat.shade); rect(head, 132, 96, 6, 6, cat.shade); }
+      // Eyes switch to curved, happy nuzzle eyes while hovered or keyboard-focused.
+      rect(face, 108, 138, 12, 18, cat.eyes, { class: "eye" }); rect(face, 180, 138, 12, 18, cat.eyes, { class: "eye" });
+      rect(face, 108, 138, 6, 6, "#fff8ee", { class: "eye" }); rect(face, 180, 138, 6, 6, "#fff8ee", { class: "eye" });
+      path(face, "M102 148h24v6h-6v6h-12v-6h-6z M174 148h24v6h-6v6h-12v-6h-6z", cat.eyes, { class: "nuzzle-eyes" });
+      // Muzzle, nose, mouth, and whiskers.
+      rect(face, 132, 162, 18, 12, cat.light); rect(face, 150, 162, 18, 12, cat.light);
+      path(face, "M144 162h12v6h-6v6h-6z", cat.nose);
+      path(face, "M150 174v8h-12v6h-6v-6h6v-6h12z M150 182h12v6h6v-6h-6v-6h-12z", cat.eyes, { class: "smile" });
+      path(face, "M108 174h24v6h-24z M114 186h12v6h-12z M168 174h24v6h-24z M174 186h12v6h-12z", cat.eyes, { opacity: ".55" });
+      path(face, "M144 174h12v6h-6v6h-6z M138 180h6v6h-6z M156 180h6v6h-6z", cat.eyes, { class: "nuzzle-mouth" });
+      // A tiny seasonal accessory gives each kitten its own personality.
+      if (cat.kind === "bow") {
+        path(acc, "M108 96l-12-12v18l12 6z M120 96l18-12v18l-18 6z", cat.accent); rect(acc, 108, 90, 12, 12, cat.nose);
+      } else if (cat.kind === "scarf") {
+        path(acc, "M96 186h108v12H96z M174 192h18v30h-12v-6h-6z", cat.accent); rect(acc, 108, 186, 72, 6, "#fff8ee", { opacity: ".6" });
+      } else if (cat.kind === "flower") {
+        rect(acc, 192, 87, 12, 12, "#ffe49a"); rect(acc, 186, 93, 12, 12, cat.accent); rect(acc, 198, 93, 12, 12, cat.accent); rect(acc, 192, 99, 12, 12, cat.accent); rect(acc, 192, 93, 12, 12, "#ffe49a");
+      } else {
+        path(acc, "M102 96l24-24h48l24 24v6h-96z", cat.accent); rect(acc, 96, 96, 108, 8, cat.shade); rect(acc, 126, 78, 42, 6, "#fff8ee", { opacity: ".65" });
+      }
+    }
+    function setKitten(nextIndex) {
+      index = (nextIndex + kittens.length) % kittens.length;
+      const cat = kittens[index];
+      draw(cat);
+      $("cat-name").textContent = cat.name;
+      $("cat-title").textContent = cat.name;
+      seconds = 15;
+      $("timer").textContent = `Next in ${seconds}s`;
+      clearInterval(switchTimer);
+      clearInterval(treatTimer);
+      clearTimeout(treatStopTimer);
+      activeTreat = undefined;
+      treatTimer = undefined;
+      treats.length = 0;
+      $("treat-layer").replaceChildren();
+      $("scene").classList.remove("nibbling");
+      $("treat").setAttribute("aria-pressed", "false");
+      $("treat-note").textContent = "";
+      switchTimer = setInterval(() => setKitten(index + 1), 15000);
+    }
+    $("next").addEventListener("click", () => setKitten(index + 1));
+    $("prev").addEventListener("click", () => setKitten(index - 1));
+    function randomBetween(min, max) { return min + Math.random() * (max - min); }
+    function playMeowTone(pitch, length) {
+      const now = audioContext.currentTime;
+      const voice = audioContext.createOscillator();
+      const overtone = audioContext.createOscillator();
+      const filter = audioContext.createBiquadFilter();
+      const volume = audioContext.createGain();
+      voice.type = "triangle";
+      overtone.type = "sine";
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(2100, now);
+      filter.Q.setValueAtTime(0.8, now);
+      voice.frequency.setValueAtTime(pitch, now);
+      voice.frequency.exponentialRampToValueAtTime(pitch * 1.55, now + length * 0.24);
+      voice.frequency.exponentialRampToValueAtTime(pitch * 0.78, now + length);
+      overtone.frequency.setValueAtTime(pitch * 2, now);
+      overtone.frequency.exponentialRampToValueAtTime(pitch * 3.1, now + length * 0.24);
+      overtone.frequency.exponentialRampToValueAtTime(pitch * 1.56, now + length);
+      volume.gain.setValueAtTime(0.0001, now);
+      volume.gain.exponentialRampToValueAtTime(0.05, now + Math.min(0.045, length * 0.12));
+      volume.gain.exponentialRampToValueAtTime(0.0001, now + length + 0.025);
+      voice.connect(filter);
+      overtone.connect(filter);
+      filter.connect(volume);
+      volume.connect(audioContext.destination);
+      voice.start(now);
+      overtone.start(now);
+      voice.stop(now + length + 0.04);
+      overtone.stop(now + length + 0.04);
+    }
+    function playPurr(pitch = kittens[index].voice.purrPitch, length = 0.9) {
+      if (!soundEnabled || !audioContext || audioContext.state !== "running") return;
+      const now = audioContext.currentTime;
+      const rumble = audioContext.createOscillator();
+      const filter = audioContext.createBiquadFilter();
+      const volume = audioContext.createGain();
+      rumble.type = "triangle";
+      rumble.frequency.setValueAtTime(pitch, now);
+      rumble.frequency.linearRampToValueAtTime(pitch * 0.94, now + length);
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(520, now);
+      volume.gain.setValueAtTime(0.0001, now);
+      const pulse = 0.055;
+      for (let t = 0; t < length; t += pulse) {
+        const start = now + t;
+        volume.gain.setValueAtTime(0.003, start);
+        volume.gain.linearRampToValueAtTime(0.022, start + pulse * 0.45);
+        volume.gain.linearRampToValueAtTime(0.004, start + pulse * 0.9);
+      }
+      volume.gain.linearRampToValueAtTime(0.0001, now + length);
+      rumble.connect(filter);
+      filter.connect(volume);
+      volume.connect(audioContext.destination);
+      rumble.start(now);
+      rumble.stop(now + length + 0.03);
+    }
+    const fluteMotifs = [
+      [659.25, 783.99, 880, 783.99, 659.25, 587.33, 523.25, 587.33, 659.25, 783.99, 987.77, 880, 783.99, 659.25, 587.33, 659.25],
+      [523.25, 587.33, 659.25, 783.99, 880, 783.99, 659.25, 587.33, 523.25, 659.25, 783.99, 880, 1046.5, 987.77, 880, 783.99],
+      [880, 987.77, 1046.5, 987.77, 880, 783.99, 659.25, 783.99, 880, 783.99, 659.25, 587.33, 523.25, 587.33, 659.25, 523.25],
+      [587.33, 659.25, 783.99, 880, 783.99, 659.25, 587.33, 523.25, 587.33, 659.25, 783.99, 659.25, 587.33, 523.25, 587.33, 523.25]
+    ];
+    const fluteDurations = [1.75, 1.55, 2.1, 1.55, 1.75, 2.05, 1.55, 2.35, 1.55, 1.75, 2.1, 1.55, 1.75, 1.55, 2.05, 2.35];
+    const flutePhrase = fluteMotifs.flatMap((motif, section) => motif.map((pitch, note) => [pitch, fluteDurations[note]]));
+    function playFluteNote(pitch, length, startAt) {
+      const flute = audioContext.createOscillator();
+      const breath = audioContext.createOscillator();
+      const vibrato = audioContext.createOscillator();
+      const vibratoDepth = audioContext.createGain();
+      const breathLevel = audioContext.createGain();
+      const filter = audioContext.createBiquadFilter();
+      const envelope = audioContext.createGain();
+      flute.type = "sine";
+      breath.type = "sine";
+      vibrato.type = "sine";
+      flute.frequency.setValueAtTime(pitch, startAt);
+      breath.frequency.setValueAtTime(pitch * 2, startAt);
+      vibrato.frequency.setValueAtTime(5.1, startAt);
+      vibratoDepth.gain.setValueAtTime(2.4, startAt);
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(2400, startAt);
+      breathLevel.gain.setValueAtTime(0.1, startAt);
+      envelope.gain.setValueAtTime(0.0001, startAt);
+      envelope.gain.linearRampToValueAtTime(0.014, startAt + 0.09);
+      envelope.gain.setValueAtTime(0.014, startAt + length * 0.72);
+      envelope.gain.exponentialRampToValueAtTime(0.0001, startAt + length);
+      vibrato.connect(vibratoDepth);
+      vibratoDepth.connect(flute.frequency);
+      flute.connect(filter);
+      breath.connect(breathLevel);
+      breathLevel.connect(filter);
+      filter.connect(envelope);
+      envelope.connect(musicBus);
+      flute.start(startAt); breath.start(startAt); vibrato.start(startAt);
+      flute.stop(startAt + length + 0.02);
+      breath.stop(startAt + length + 0.02);
+      vibrato.stop(startAt + length + 0.02);
+    }
+    function scheduleFlutePhrase() {
+      if (!soundEnabled || !audioContext || audioContext.state !== "running") return;
+      const phraseStart = audioContext.currentTime + 0.08;
+      let offset = 0;
+      for (const [pitch, length] of flutePhrase) {
+        playFluteNote(pitch, length, phraseStart + offset);
+        offset += length + 0.08;
+      }
+      melodyTimer = setTimeout(scheduleFlutePhrase, 120000);
+    }
+    function playMeow() {
+      if (!soundEnabled || !audioContext || audioContext.state !== "running") return;
+      const now = audioContext.currentTime;
+      if (now - lastMeowAt < 0.5) return;
+      lastMeowAt = now;
+      const catIndex = index;
+      const voice = kittens[catIndex].voice;
+      const pitch = randomBetween(...voice.pitch);
+      const length = randomBetween(...voice.length);
+      playMeowTone(pitch, length);
+
+      const doubleMeow = Math.random() < voice.doubleChance;
+      if (doubleMeow) {
+        setTimeout(() => {
+          if (soundEnabled && index === catIndex) playMeowTone(pitch * randomBetween(1.08, 1.22), length * 0.72);
+        }, Math.max(120, length * 420));
+      }
+      if (Math.random() < voice.purrChance) {
+        setTimeout(() => {
+          if (soundEnabled && index === catIndex) playPurr(voice.purrPitch, randomBetween(0.72, 1.05));
+        }, Math.max(300, length * (doubleMeow ? 920 : 680)));
+      }
+    }
+    function startTreatEating(treat) {
+      activeTreat = treat;
+      treat.kittenIndex = index;
+      $("scene").classList.add("nibbling");
+      $("treat").setAttribute("aria-pressed", "true");
+      $("treat-note").textContent = `${kittens[index].name.split(" · ")[0]} is happily nibbling!`;
+      treatTimer = setInterval(() => {
+        if (soundEnabled && audioContext?.state === "running" && index === treat.kittenIndex) {
+          playMeow();
+          playPurr(kittens[treat.kittenIndex].voice.purrPitch, 0.82);
+        }
+      }, 900);
+      treatStopTimer = setTimeout(() => {
+        clearInterval(treatTimer);
+        treatTimer = undefined;
+        treat.element.classList.add("is-eaten");
+        treatStopTimer = setTimeout(() => {
+          treat.element.remove();
+          const treatIndex = treats.indexOf(treat);
+          if (treatIndex !== -1) treats.splice(treatIndex, 1);
+          activeTreat = undefined;
+          $("scene").classList.remove("nibbling");
+          $("treat").setAttribute("aria-pressed", "false");
+          $("treat-note").textContent = `${kittens[index].name.split(" · ")[0]} says thanks!`;
+          if (treats.length) startTreatEating(treats[0]);
+        }, 320);
+      }, 5000);
+    }
+    $("treat").addEventListener("click", () => {
+      if (treats.length >= 3) return;
+      if (!soundEnabled) $("sound-toggle").click();
+      const treat = document.createElement("div");
+      treat.className = "treat-piece is-new";
+      treat.style.left = ["42%", "54%", "66%"][treats.length];
+      treat.innerHTML = `<svg viewBox="0 0 34 26" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="17" cy="22" rx="11" ry="2" fill="#a89582" opacity=".28"/>
+        <path d="M6 11 9 6l5-2 4 2 5-1 5 4 1 6-4 4H9l-4-4z" fill="#d99b58" stroke="#b67743" stroke-width="2" stroke-linejoin="round"/>
+        <path d="m10 9 3-2 2 2-2 2zm9-1 3-1 2 3-3 1zm-4 7 3-2 2 3-3 2z" fill="#ffe0a0"/>
+        <circle cx="9" cy="15" r="1" fill="#f5c879"/><circle cx="25" cy="13" r="1" fill="#f5c879"/>
+      </svg>`;
+      $("treat-layer").appendChild(treat);
+      const treatItem = { element: treat, kittenIndex: index };
+      treats.push(treatItem);
+      setTimeout(() => treat.classList.remove("is-new"), 750);
+      if (!activeTreat) startTreatEating(treatItem);
+    });
+    $("sound-toggle").addEventListener("click", async () => {
+      if (soundEnabled) {
+        soundEnabled = false;
+        clearTimeout(melodyTimer);
+        if (musicBus && audioContext) {
+          musicBus.gain.cancelScheduledValues(audioContext.currentTime);
+          musicBus.gain.setTargetAtTime(0.0001, audioContext.currentTime, 0.12);
+        }
+      } else {
+        const AudioContextType = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextType) {
+          $("sound-toggle").textContent = "Sound unavailable";
+          $("sound-toggle").disabled = true;
+          return;
+        }
+        audioContext ||= new AudioContextType();
+        try {
+          await audioContext.resume();
+          soundEnabled = audioContext.state === "running";
+          if (soundEnabled) {
+            musicBus ||= audioContext.createGain();
+            musicBus.connect(audioContext.destination);
+            musicBus.gain.cancelScheduledValues(audioContext.currentTime);
+            musicBus.gain.setValueAtTime(0.0001, audioContext.currentTime);
+            musicBus.gain.exponentialRampToValueAtTime(0.68, audioContext.currentTime + 0.8);
+            scheduleFlutePhrase();
+          }
+        } catch {
+          soundEnabled = false;
+        }
+      }
+      $("sound-toggle").setAttribute("aria-pressed", String(soundEnabled));
+      $("sound-toggle").textContent = soundEnabled ? "♫ Sounds on · click to mute" : "♫ Turn sounds on";
+      $("hint").textContent = soundEnabled
+        ? "A gentle flute tune plays; hover for each kitten’s own hello ♡"
+        : "Turn on sounds for kitten voices and a gentle flute tune ♡";
+    });
+    $("kitten").addEventListener("pointerenter", playMeow);
+    $("kitten").addEventListener("focus", playMeow);
+    $("kitten").addEventListener("click", () => $("kitten").classList.toggle("loved"));
+    $("kitten").addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") { event.preventDefault(); $("kitten").classList.toggle("loved"); }
+    });
+    setKitten(0);
+    setInterval(() => {
+      seconds = seconds > 1 ? seconds - 1 : 15;
+      $("timer").textContent = `Next in ${seconds}s`;
+    }, 1000);
+  </script>
+</body>
+</html>
