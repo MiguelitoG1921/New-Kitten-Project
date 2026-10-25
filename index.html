@@ -114,6 +114,12 @@
     .kitten-wrap.action-bow .cat-stage { animation: cat-bow 3s ease-in-out forwards; }
     .kitten-wrap.action-bow .shadow-stage { animation: shadow-bow 3s ease-in-out forwards; }
 
+    .kitten-wrap.action-pounce .cat-stage { animation: cat-pounce 3s ease-in-out forwards; }
+    .kitten-wrap.action-pounce .shadow-stage { animation: shadow-pounce 3s ease-in-out forwards; }
+
+    .kitten-wrap.action-spin .cat-stage { animation: cat-spin 3s ease-in-out forwards; }
+    .kitten-wrap.action-spin .shadow-stage { animation: shadow-spin 3s ease-in-out forwards; }
+
     /* Joyful facial expression during animations */
     .kitten-wrap.happy-face .eye, .kitten-wrap.happy-face .smile { opacity: 0; }
     .kitten-wrap.happy-face .nuzzle-eyes, .kitten-wrap.happy-face .nuzzle-mouth { opacity: 1; }
@@ -147,7 +153,7 @@
     #treat { border-color: #ebc983; background: #fff5d9; box-shadow: 0 4px 0 #e7d4aa; }
     #treat:hover { background: #ffedc1; }
     #treat[aria-pressed="true"] { background: #ffe9b2; }
-    .treat-note { min-height: 1.2em; margin: 8px 0 0; color: #a47e52; font-size: 13px; }
+    .treat-note { min-height: 1.2em; margin: 8px 0 0; color: #a47e52; font-size: 13px; font-weight: 600; }
     #sound-toggle[aria-pressed="true"] { border-color: #e3b0ba; background: #fff1ed; color: #9b596a; }
     .hint { margin: 23px 0 0; color: #a39291; font-size: 13px; }
     @keyframes purr { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
@@ -280,6 +286,42 @@
       100% { transform: scale(1); opacity: 0.55; }
     }
 
+    /* Pounce Keyframes: Cat crouches & playfully pounces; Shadow stays on ground */
+    @keyframes cat-pounce {
+      0% { transform: translateY(0) scale(1) rotate(0deg); }
+      18% { transform: translateY(12px) scale(1.12, 0.86) rotate(-3deg); }
+      30% { transform: translateY(10px) scale(1.1, 0.88) rotate(3deg); }
+      45% { transform: translateY(12px) scale(1.14, 0.84) rotate(-2deg); }
+      65% { transform: translateY(-24px) translateX(12px) scale(0.95, 1.08) rotate(4deg); }
+      82% { transform: translateY(6px) translateX(12px) scale(1.08, 0.92) rotate(-1deg); }
+      100% { transform: translateY(0) translateX(0) scale(1) rotate(0deg); }
+    }
+    @keyframes shadow-pounce {
+      0% { transform: scale(1); opacity: 0.55; }
+      18% { transform: scale(1.14, 1.08); opacity: 0.65; }
+      30% { transform: scale(1.12, 1.06); opacity: 0.62; }
+      45% { transform: scale(1.16, 1.1); opacity: 0.68; }
+      65% { transform: translateX(12px) scale(0.75, 0.7); opacity: 0.32; }
+      82% { transform: translateX(12px) scale(1.12, 1.05); opacity: 0.62; }
+      100% { transform: translateX(0) scale(1); opacity: 0.55; }
+    }
+
+    /* Spin Keyframes: Cat does double victory spins; Shadow stays flat on ground */
+    @keyframes cat-spin {
+      0% { transform: rotate(0deg) scale(1); }
+      30% { transform: rotate(360deg) translateY(-14px) scale(1.04); }
+      65% { transform: rotate(720deg) translateY(-10px) scale(1.04); }
+      85% { transform: rotate(720deg) translateY(4px) scale(1.02, 0.96); }
+      100% { transform: rotate(720deg) translateY(0) scale(1); }
+    }
+    @keyframes shadow-spin {
+      0% { transform: scale(1); opacity: 0.55; }
+      30% { transform: scale(0.82, 0.78); opacity: 0.38; }
+      65% { transform: scale(0.84, 0.8); opacity: 0.4; }
+      85% { transform: scale(1.08, 1.04); opacity: 0.62; }
+      100% { transform: scale(1); opacity: 0.55; }
+    }
+
     @media (max-width: 480px) { .scene { min-height: 320px; border-radius: 22px; } .sun { width: 42px; height: 42px; } .cloud { transform: scale(.8); transform-origin: top left; } }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
   </style>
@@ -329,24 +371,182 @@
     <p class="hint" id="hint">Turn on sounds for kitten voices and a gentle flute tune ♡</p>
   </main>
   <script>
-    const kittens = [
-      { name: "Mochi · the daydream cartographer", fur: "#f3c7bd", shade: "#df9f9c", light: "#ffe5d9", inner: "#c77883", nose: "#d8798d", eyes: "#57434b", accent: "#d9889b", kind: "bow", voice: { pitch: [620, 770], length: [0.48, 0.72], doubleChance: 0.08, purrChance: 0.48, purrPitch: 118 }, postSnack: { type: "float", text: "Mochi floats into a warm, starry daydream..." } },
-      { name: "Pippin · the cloud's assistant", fur: "#e8e2d8", shade: "#c9c0b8", light: "#fff8e9", inner: "#db9e9e", nose: "#cf8291", eyes: "#536b72", accent: "#a8c8c2", kind: "scarf", voice: { pitch: [740, 940], length: [0.24, 0.38], doubleChance: 0.7, purrChance: 0.2, purrPitch: 142 }, postSnack: { type: "hop", text: "Pippin chirps and does a bouncy cloud hop!" } },
-      { name: "Peaches · the sunbeam collector", fur: "#efbd7e", shade: "#d89659", light: "#ffe2a8", inner: "#c97875", nose: "#ce7785", eyes: "#654638", accent: "#e9af67", kind: "flower", voice: { pitch: [560, 830], length: [0.28, 0.52], doubleChance: 0.42, purrChance: 0.36, purrPitch: 132 }, postSnack: { type: "belly", text: "Peaches rolls onto their back to show a sunny tummy!" } },
-      { name: "Biscuit · the blanket architect", fur: "#b8a0c8", shade: "#9478aa", light: "#e0cbe9", inner: "#ce91a2", nose: "#c9758c", eyes: "#51465f", accent: "#ddabc3", kind: "hat", voice: { pitch: [360, 510], length: [0.52, 0.82], doubleChance: 0.12, purrChance: 0.72, purrPitch: 104 }, postSnack: { type: "curl", text: "Biscuit curls into a warm loaf and purrs softly!" } },
-      { name: "Juniper · the fern detective", fur: "#b7cba8", shade: "#849d7c", light: "#e2edcf", inner: "#c98791", nose: "#bd7183", eyes: "#435c4a", accent: "#8eaf86", kind: "flower", voice: { pitch: [510, 680], length: [0.35, 0.62], doubleChance: 0.25, purrChance: 0.55, purrPitch: 112 }, postSnack: { type: "hop", text: "Juniper does a curious victory leap through the ferns!" } },
-      { name: "Marmalade · tiny train conductor", fur: "#e9a66e", shade: "#bf704d", light: "#ffdfb4", inner: "#c87979", nose: "#bd6276", eyes: "#62443b", accent: "#bb6570", kind: "hat", voice: { pitch: [430, 590], length: [0.38, 0.58], doubleChance: 0.62, purrChance: 0.31, purrPitch: 126 }, postSnack: { type: "bow", text: "Marmalade gives a proud little conductor's bow!" } },
-      { name: "Tinsel · the midnight astronomer", fur: "#8f9fbe", shade: "#626f96", light: "#d8def1", inner: "#d29bad", nose: "#c57c96", eyes: "#3b4562", accent: "#f0d28c", kind: "bow", voice: { pitch: [690, 860], length: [0.3, 0.52], doubleChance: 0.18, purrChance: 0.66, purrPitch: 108 }, postSnack: { type: "float", text: "Tinsel drifts dreamily, gazing at starry skies!" } },
-      { name: "Pickle · champion puddle inspector", fur: "#c7b66f", shade: "#928747", light: "#f2e6a9", inner: "#c17d87", nose: "#b9697b", eyes: "#50533b", accent: "#88aaa1", kind: "scarf", voice: { pitch: [390, 570], length: [0.48, 0.7], doubleChance: 0.44, purrChance: 0.4, purrPitch: 116 }, postSnack: { type: "hop", text: "Pickle splashes into a joyful little wiggle dance!" } },
-      { name: "Velvet · the opera-house usher", fur: "#bb8298", shade: "#885c79", light: "#f0c9d1", inner: "#e3a4a7", nose: "#ca718b", eyes: "#523c54", accent: "#e2bf74", kind: "bow", voice: { pitch: [540, 760], length: [0.58, 0.86], doubleChance: 0.16, purrChance: 0.78, purrPitch: 98 }, postSnack: { type: "bow", text: "Velvet gives a graceful, theatrical curtsy of thanks!" } },
-      { name: "Nori · the brave teacup sailor", fur: "#768f92", shade: "#506d75", light: "#c9ded4", inner: "#d19aa4", nose: "#c8778b", eyes: "#344b54", accent: "#e1b56e", kind: "scarf", voice: { pitch: [620, 820], length: [0.26, 0.48], doubleChance: 0.76, purrChance: 0.26, purrPitch: 136 }, postSnack: { type: "float", text: "Nori rocks gently like a happy little ship at sea!" } },
-      { name: "Dumpling · the nap-time philosopher", fur: "#e2c49e", shade: "#b69777", light: "#fff0d4", inner: "#d49ca0", nose: "#c87b88", eyes: "#5b4d45", accent: "#b9a6c8", kind: "hat", voice: { pitch: [330, 470], length: [0.62, 0.92], doubleChance: 0.08, purrChance: 0.86, purrPitch: 92 }, postSnack: { type: "belly", text: "Dumpling flops belly-up into deep nap-time bliss!" } },
-      { name: "Fable · the library's quiet dragon", fur: "#a99ac4", shade: "#776c9c", light: "#e4d8ed", inner: "#d094a5", nose: "#c2738b", eyes: "#49415f", accent: "#c78ca2", kind: "flower", voice: { pitch: [470, 660], length: [0.46, 0.72], doubleChance: 0.32, purrChance: 0.57, purrPitch: 110 }, postSnack: { type: "curl", text: "Fable curls up tight like a cozy little bookend!" } },
-      { name: "Waffles · the breakfast magician", fur: "#d49c65", shade: "#a86e48", light: "#f7d49b", inner: "#c97d7c", nose: "#c56c80", eyes: "#594235", accent: "#f2d381", kind: "bow", voice: { pitch: [580, 790], length: [0.28, 0.5], doubleChance: 0.7, purrChance: 0.39, purrPitch: 124 }, postSnack: { type: "bow", text: "Waffles does a magical little treat spin!" } },
-      { name: "Saffron · the tiny weather witch", fur: "#d9adbd", shade: "#aa829b", light: "#f5dce0", inner: "#c27b8d", nose: "#bd6c80", eyes: "#59465a", accent: "#e8c26d", kind: "hat", voice: { pitch: [720, 960], length: [0.22, 0.4], doubleChance: 0.55, purrChance: 0.34, purrPitch: 140 }, postSnack: { type: "float", text: "Saffron floats peacefully on a cozy warm breeze!" } },
-      { name: "Cricket · the pocket-sized drummer", fur: "#9eb6a0", shade: "#6e8a78", light: "#d8e8cd", inner: "#ce8c96", nose: "#c06f82", eyes: "#3d5949", accent: "#dca8a5", kind: "scarf", voice: { pitch: [480, 700], length: [0.2, 0.3], doubleChance: 0.9, purrChance: 0.22, purrPitch: 132 }, postSnack: { type: "hop", text: "Cricket taps out a joyful victory rhythm with happy hops!" } },
-      { name: "Bluebell · the moonlit mail carrier", fur: "#a8c4d5", shade: "#718fa9", light: "#e0eff0", inner: "#d69aa4", nose: "#c7798d", eyes: "#40596a", accent: "#ebcd83", kind: "flower", voice: { pitch: [650, 880], length: [0.34, 0.6], doubleChance: 0.35, purrChance: 0.61, purrPitch: 106 }, postSnack: { type: "belly", text: "Bluebell rolls over happily for moonlight belly rubs!" } }
+    const treatTypes = [
+      {
+        id: "wetFood",
+        name: "gourmet wet food",
+        eatingText: "is happily slurping up gourmet wet food!",
+        svg: `<svg viewBox="0 0 34 26" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="17" cy="22" rx="12" ry="2.5" fill="#a89582" opacity=".28"/>
+  <rect x="7" y="11" width="20" height="9" rx="2" fill="#d4959f" stroke="#b46f7c" stroke-width="1.5"/>
+  <ellipse cx="17" cy="11" rx="10" ry="3.5" fill="#e8b5be" stroke="#b46f7c" stroke-width="1.5"/>
+  <ellipse cx="17" cy="11" rx="8" ry="2.5" fill="#c47854"/>
+  <circle cx="15" cy="10.5" r="1.5" fill="#dd926e"/>
+  <circle cx="19" cy="11.5" r="1.2" fill="#f0b593"/>
+  <path d="M15 14 a1.5 1.5 0 0 1 2 0 a1.5 1.5 0 0 1 2 0 c0 1.2-2 2.2-2 2.2 s-2-1-2-2.2z" fill="#fffaf2"/>
+</svg>`
+      },
+      {
+        id: "fish",
+        name: "a fresh little fish",
+        eatingText: "is joyfully munching on a tasty little fish!",
+        svg: `<svg viewBox="0 0 34 26" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="17" cy="22" rx="12" ry="2.5" fill="#a89582" opacity=".28"/>
+  <path d="M6 8 L12 13 L6 18 Z" fill="#75b5c9" stroke="#4a8b9f" stroke-width="1.5"/>
+  <path d="M10 13 Q18 6 26 13 Q18 20 10 13 Z" fill="#8ecdde" stroke="#4a8b9f" stroke-width="1.5"/>
+  <path d="M13 14 Q19 18 24 14" stroke="#e0f5fb" stroke-width="1.5" fill="none"/>
+  <circle cx="23" cy="11.5" r="1.5" fill="#32505c"/>
+  <circle cx="23.5" cy="11" r="0.5" fill="#ffffff"/>
+  <path d="M17 10 Q19 12 17 15" stroke="#68a8bd" stroke-width="1.2" fill="none"/>
+</svg>`
+      },
+      {
+        id: "mouse",
+        name: "a toy mouse",
+        eatingText: "is eagerly batting and chasing the toy mouse!",
+        svg: `<svg viewBox="0 0 34 26" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="17" cy="22" rx="12" ry="2.5" fill="#a89582" opacity=".28"/>
+  <path d="M7 16 Q4 13 6 10 Q8 8 5 6" stroke="#e3a6b5" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="18" cy="14" rx="9" ry="6" fill="#c5bcc9" stroke="#8d8194" stroke-width="1.5"/>
+  <ellipse cx="15" cy="9" rx="3.5" ry="4" fill="#e8b5c4" stroke="#8d8194" stroke-width="1.2"/>
+  <circle cx="26.5" cy="15" r="1.2" fill="#df8b9e"/>
+  <circle cx="22" cy="12" r="1.2" fill="#443c4a"/>
+  <circle cx="22.3" cy="11.7" r="0.4" fill="#ffffff"/>
+</svg>`
+      }
     ];
+
+    const kittens = [
+      {
+        name: "Mochi · the daydream cartographer", fur: "#f3c7bd", shade: "#df9f9c", light: "#ffe5d9", inner: "#c77883", nose: "#d8798d", eyes: "#57434b", accent: "#d9889b", kind: "bow", voice: { pitch: [620, 770], length: [0.48, 0.72], doubleChance: 0.08, purrChance: 0.48, purrPitch: 118 },
+        reactions: {
+          wetFood: { type: "belly", text: "Mochi is so full and blissfully rolls over for daydream tummy rubs!" },
+          fish: { type: "float", text: "Mochi drifts upward, dreaming of a magical ocean in the clouds..." },
+          mouse: { type: "pounce", text: "Mochi maps out the mouse's secret escape routes with a playful pounce!" }
+        }
+      },
+      {
+        name: "Pippin · the cloud's assistant", fur: "#e8e2d8", shade: "#c9c0b8", light: "#fff8e9", inner: "#db9e9e", nose: "#cf8291", eyes: "#536b72", accent: "#a8c8c2", kind: "scarf", voice: { pitch: [740, 940], length: [0.24, 0.38], doubleChance: 0.7, purrChance: 0.2, purrPitch: 142 },
+        reactions: {
+          wetFood: { type: "curl", text: "Pippin slurps every drop, tucking into a fluffy, contented cloud loaf!" },
+          fish: { type: "hop", text: "Pippin chirps with triumph and does a springy aerial cloud hop!" },
+          mouse: { type: "spin", text: "Pippin victoriously spins in circles, celebrating catching the mouse!" }
+        }
+      },
+      {
+        name: "Peaches · the sunbeam collector", fur: "#efbd7e", shade: "#d89659", light: "#ffe2a8", inner: "#c97875", nose: "#ce7785", eyes: "#654638", accent: "#e9af67", kind: "flower", voice: { pitch: [560, 830], length: [0.28, 0.52], doubleChance: 0.42, purrChance: 0.36, purrPitch: 132 },
+        reactions: {
+          wetFood: { type: "belly", text: "Peaches rolls right into a warm sunbeam, exposing their tummy in pure bliss!" },
+          fish: { type: "bow", text: "Peaches savors the fish and offers a polite, golden sunbeam bow!" },
+          mouse: { type: "hop", text: "Peaches bounces with sunny excitement, tossing the toy mouse high!" }
+        }
+      },
+      {
+        name: "Biscuit · the blanket architect", fur: "#b8a0c8", shade: "#9478aa", light: "#e0cbe9", inner: "#ce91a2", nose: "#c9758c", eyes: "#51465f", accent: "#ddabc3", kind: "hat", voice: { pitch: [360, 510], length: [0.52, 0.82], doubleChance: 0.12, purrChance: 0.72, purrPitch: 104 },
+        reactions: {
+          wetFood: { type: "curl", text: "Biscuit curls into the tightest, coziest blanket loaf and purrs loudly!" },
+          fish: { type: "belly", text: "Biscuit flops over in delicious satisfaction, kneading the air with tiny paws!" },
+          mouse: { type: "pounce", text: "Biscuit constructs an elaborate blanket trap and pounces on the mouse!" }
+        }
+      },
+      {
+        name: "Juniper · the fern detective", fur: "#b7cba8", shade: "#849d7c", light: "#e2edcf", inner: "#c98791", nose: "#bd7183", eyes: "#435c4a", accent: "#8eaf86", kind: "flower", voice: { pitch: [510, 680], length: [0.35, 0.62], doubleChance: 0.25, purrChance: 0.55, purrPitch: 112 },
+        reactions: {
+          wetFood: { type: "curl", text: "Juniper finishes inspecting the bowl, tucking in for a restorative fern nap." },
+          fish: { type: "pounce", text: "Juniper crouches in the leaves and makes a dramatic flying leap of victory!" },
+          mouse: { type: "spin", text: "Juniper solves the mystery of the running mouse with a triumphant spin!" }
+        }
+      },
+      {
+        name: "Marmalade · tiny train conductor", fur: "#e9a66e", shade: "#bf704d", light: "#ffdfb4", inner: "#c87979", nose: "#bd6276", eyes: "#62443b", accent: "#bb6570", kind: "hat", voice: { pitch: [430, 590], length: [0.38, 0.58], doubleChance: 0.62, purrChance: 0.31, purrPitch: 126 },
+        reactions: {
+          wetFood: { type: "belly", text: "Marmalade reaches full passenger capacity and rolls onto their back to rest!" },
+          fish: { type: "bow", text: "Marmalade gives two loud happy toots and takes a formal conductor's bow!" },
+          mouse: { type: "hop", text: "Marmalade chugs along the tracks, happily hopping over the toy mouse!" }
+        }
+      },
+      {
+        name: "Tinsel · the midnight astronomer", fur: "#8f9fbe", shade: "#626f96", light: "#d8def1", inner: "#d29bad", nose: "#c57c96", eyes: "#3b4562", accent: "#f0d28c", kind: "bow", voice: { pitch: [690, 860], length: [0.3, 0.52], doubleChance: 0.18, purrChance: 0.66, purrPitch: 108 },
+        reactions: {
+          wetFood: { type: "curl", text: "Tinsel curls up like a crescent moon, purring celestial melodies." },
+          fish: { type: "float", text: "Tinsel floats peacefully toward the stars, savoring the starlight snack..." },
+          mouse: { type: "pounce", text: "Tinsel tracks the mouse's orbit and swoops down like a falling comet!" }
+        }
+      },
+      {
+        name: "Pickle · champion puddle inspector", fur: "#c7b66f", shade: "#928747", light: "#f2e6a9", inner: "#c17d87", nose: "#b9697b", eyes: "#50533b", accent: "#88aaa1", kind: "scarf", voice: { pitch: [390, 570], length: [0.48, 0.7], doubleChance: 0.44, purrChance: 0.4, purrPitch: 116 },
+        reactions: {
+          wetFood: { type: "belly", text: "Pickle licks the bowl sparkling clean and rolls over with a happy sigh!" },
+          fish: { type: "spin", text: "Pickle does a dizzy, joyful victory swirl like a splash in a deep puddle!" },
+          mouse: { type: "hop", text: "Pickle splashes into action with energetic pouncing hops all around!" }
+        }
+      },
+      {
+        name: "Velvet · the opera-house usher", fur: "#bb8298", shade: "#885c79", light: "#f0c9d1", inner: "#e3a4a7", nose: "#ca718b", eyes: "#523c54", accent: "#e2bf74", kind: "bow", voice: { pitch: [540, 760], length: [0.58, 0.86], doubleChance: 0.16, purrChance: 0.78, purrPitch: 98 },
+        reactions: {
+          wetFood: { type: "belly", text: "Velvet forgets all royal decorum and flops over for unrefined belly scritches!" },
+          fish: { type: "bow", text: "Velvet sweeps down into an immaculate, theatrical curtain-call curtsy!" },
+          mouse: { type: "spin", text: "Velvet performs a breathtaking pirouette with the captured mouse!" }
+        }
+      },
+      {
+        name: "Nori · the brave teacup sailor", fur: "#768f92", shade: "#506d75", light: "#c9ded4", inner: "#d19aa4", nose: "#c8778b", eyes: "#344b54", accent: "#e1b56e", kind: "scarf", voice: { pitch: [620, 820], length: [0.26, 0.48], doubleChance: 0.76, purrChance: 0.26, purrPitch: 136 },
+        reactions: {
+          wetFood: { type: "curl", text: "Nori drops anchor after a hearty feast, curling into a peaceful harbor loaf." },
+          fish: { type: "float", text: "Nori sways like a proud captain riding the crest of cozy gentle waves!" },
+          mouse: { type: "pounce", text: "Nori spots the stowaway mouse and leaps across the teacup deck!" }
+        }
+      },
+      {
+        name: "Dumpling · the nap-time philosopher", fur: "#e2c49e", shade: "#b69777", light: "#fff0d4", inner: "#d49ca0", nose: "#c87b88", eyes: "#5b4d45", accent: "#b9a6c8", kind: "hat", voice: { pitch: [330, 470], length: [0.62, 0.92], doubleChance: 0.08, purrChance: 0.86, purrPitch: 92 },
+        reactions: {
+          wetFood: { type: "belly", text: "Dumpling reaches ultimate enlightenment: an immediate belly-up food coma!" },
+          fish: { type: "curl", text: "Dumpling ponders the deep philosophy of fish while settling into a warm loaf." },
+          mouse: { type: "hop", text: "Dumpling musters surprising athletic spirit with an energetic little victory hop!" }
+        }
+      },
+      {
+        name: "Fable · the library's quiet dragon", fur: "#a99ac4", shade: "#776c9c", light: "#e4d8ed", inner: "#d094a5", nose: "#c2738b", eyes: "#49415f", accent: "#c78ca2", kind: "flower", voice: { pitch: [470, 660], length: [0.46, 0.72], doubleChance: 0.32, purrChance: 0.57, purrPitch: 110 },
+        reactions: {
+          wetFood: { type: "curl", text: "Fable curls protectively like a tiny sleepy book dragon guarding treasure." },
+          fish: { type: "float", text: "Fable hovers softly, exhaling a tiny puff of cozy daydream magic!" },
+          mouse: { type: "pounce", text: "Fable spots a rival book-gobbler and pounces with heroic precision!" }
+        }
+      },
+      {
+        name: "Waffles · the breakfast magician", fur: "#d49c65", shade: "#a86e48", light: "#f7d49b", inner: "#c97d7c", nose: "#c56c80", eyes: "#594235", accent: "#f2d381", kind: "bow", voice: { pitch: [580, 790], length: [0.28, 0.5], doubleChance: 0.7, purrChance: 0.39, purrPitch: 124 },
+        reactions: {
+          wetFood: { type: "belly", text: "Waffles is delightfully stuffed and rolls belly-up for syrup-sweet rubs!" },
+          fish: { type: "spin", text: "Waffles performs an enchanting magic spin, vanishing every last crumb!" },
+          mouse: { type: "hop", text: "Waffles makes the toy mouse 'teleport' with a dazzling magical bunny hop!" }
+        }
+      },
+      {
+        name: "Saffron · the tiny weather witch", fur: "#d9adbd", shade: "#aa829b", light: "#f5dce0", inner: "#c27b8d", nose: "#bd6c80", eyes: "#59465a", accent: "#e8c26d", kind: "hat", voice: { pitch: [720, 960], length: [0.22, 0.4], doubleChance: 0.55, purrChance: 0.34, purrPitch: 140 },
+        reactions: {
+          wetFood: { type: "curl", text: "Saffron summons a cozy indoor rain shower sound and curls up to nap." },
+          fish: { type: "float", text: "Saffron catches a warm thermal updraft, floating happily on a gentle breeze!" },
+          mouse: { type: "pounce", text: "Saffron casts a playful lightning pounce right onto the mouse!" }
+        }
+      },
+      {
+        name: "Cricket · the pocket-sized drummer", fur: "#9eb6a0", shade: "#6e8a78", light: "#d8e8cd", inner: "#ce8c96", nose: "#c06f82", eyes: "#3d5949", accent: "#dca8a5", kind: "scarf", voice: { pitch: [480, 700], length: [0.2, 0.3], doubleChance: 0.9, purrChance: 0.22, purrPitch: 132 },
+        reactions: {
+          wetFood: { type: "belly", text: "Cricket taps out a slow, contented digestion tempo right on their tummy!" },
+          fish: { type: "spin", text: "Cricket spins in excitement like a drumroll crescendo of pure joy!" },
+          mouse: { type: "hop", text: "Cricket plays an upbeat victory beat with rapid, bouncy little hops!" }
+        }
+      },
+      {
+        name: "Bluebell · the moonlit mail carrier", fur: "#a8c4d5", shade: "#718fa9", light: "#e0eff0", inner: "#d69aa4", nose: "#c7798d", eyes: "#40596a", accent: "#ebcd83", kind: "flower", voice: { pitch: [650, 880], length: [0.34, 0.6], doubleChance: 0.35, purrChance: 0.61, purrPitch: 106 },
+        reactions: {
+          wetFood: { type: "belly", text: "Bluebell clocks out of mail delivery duty and collapses into belly rub paradise!" },
+          fish: { type: "bow", text: "Bluebell presents a polite delivery bow after receiving a generous tip!" },
+          mouse: { type: "pounce", text: "Bluebell intercepts the express mail mouse with an acrobatic dive!" }
+        }
+      }
+    ];
+
     const $ = (id) => document.getElementById(id);
     const NS = "http://www.w3.org/2000/svg";
 
@@ -366,6 +566,7 @@
     let treatStopTimer;
     let postSnackTimer;
     let activeTreat;
+    let lastEatenTreat;
     const treats = [];
 
     function rect(parent, x, y, w, h, fill, extra = {}) {
@@ -439,6 +640,7 @@
       isEating = false;
       isPostSnack = false;
       activeTreat = undefined;
+      lastEatenTreat = undefined;
       treats.length = 0;
       $("treat-layer").replaceChildren();
       $("scene").classList.remove("nibbling");
@@ -628,7 +830,7 @@
       }
     }
 
-    function startPostSnackAnimation() {
+    function startPostSnackAnimation(eatenTreat) {
       if (isTransitioning) return;
       isPostSnack = true;
       // Pause 15s timer during post-snack animation
@@ -636,14 +838,15 @@
       $("treat").disabled = true;
 
       const currentCat = kittens[index];
-      const post = currentCat.postSnack || { type: "belly", text: `${currentCat.name.split(" · ")[0]} is delightfully happy!` };
-      $("treat-note").textContent = post.text;
+      const treatKey = eatenTreat?.id || "wetFood";
+      const reaction = currentCat.reactions?.[treatKey] || { type: "belly", text: `${currentCat.name.split(" · ")[0]} is delightfully happy!` };
+      $("treat-note").textContent = reaction.text;
 
       const kittenEl = $("kitten");
-      kittenEl.className = `kitten-wrap action-${post.type} happy-face is-animating`;
+      kittenEl.className = `kitten-wrap action-${reaction.type} happy-face is-animating`;
 
       if (soundEnabled && audioContext?.state === "running") {
-        if (post.type === "belly" || post.type === "curl") {
+        if (reaction.type === "belly" || reaction.type === "curl") {
           playPurr(currentCat.voice.purrPitch, 2.0);
         } else {
           playMeow();
@@ -653,7 +856,7 @@
         }
       }
 
-      const duration = post.type === "hop" ? 2800 : 3000;
+      const duration = reaction.type === "hop" ? 2800 : 3000;
       postSnackTimer = setTimeout(finishPostSnack, duration);
     }
 
@@ -680,7 +883,8 @@
       // The 15-second timer is NOT paused during the eating of the snack!
       $("scene").classList.add("nibbling");
       $("treat").setAttribute("aria-pressed", "true");
-      $("treat-note").textContent = `${kittens[index].name.split(" · ")[0]} is happily nibbling!`;
+      const catName = kittens[index].name.split(" · ")[0];
+      $("treat-note").textContent = `${catName} ${treat.treatType.eatingText}`;
 
       treatTimer = setInterval(() => {
         if (soundEnabled && audioContext?.state === "running" && index === treat.kittenIndex) {
@@ -697,6 +901,7 @@
           treat.element.remove();
           const treatIndex = treats.indexOf(treat);
           if (treatIndex !== -1) treats.splice(treatIndex, 1);
+          lastEatenTreat = treat.treatType;
           activeTreat = undefined;
           $("scene").classList.remove("nibbling");
           $("treat").setAttribute("aria-pressed", "false");
@@ -706,8 +911,8 @@
             // Another treat is waiting in the bowl!
             startTreatEating(treats[0]);
           } else {
-            // Finished all treats: start whimsical post-snack animation!
-            startPostSnackAnimation();
+            // Finished all treats: start whimsical post-snack animation matching this treat!
+            startPostSnackAnimation(lastEatenTreat);
           }
         }, 320);
       }, 4500);
@@ -716,17 +921,17 @@
     $("treat").addEventListener("click", () => {
       if (isTransitioning || isPostSnack || treats.length >= 3) return;
       if (!soundEnabled) $("sound-toggle").click();
+      
+      // Randomly choose 1 of the 3 treats: wet food, fish, or mouse!
+      const chosenTreat = treatTypes[Math.floor(Math.random() * treatTypes.length)];
+      
       const treat = document.createElement("div");
       treat.className = "treat-piece is-new";
       treat.style.left = ["42%", "54%", "66%"][treats.length];
-      treat.innerHTML = `<svg viewBox="0 0 34 26" xmlns="http://www.w3.org/2000/svg">
-        <ellipse cx="17" cy="22" rx="11" ry="2" fill="#a89582" opacity=".28"/>
-        <path d="M6 11 9 6l5-2 4 2 5-1 5 4 1 6-4 4H9l-4-4z" fill="#d99b58" stroke="#b67743" stroke-width="2" stroke-linejoin="round"/>
-        <path d="m10 9 3-2 2 2-2 2zm9-1 3-1 2 3-3 1zm-4 7 3-2 2 3-3 2z" fill="#ffe0a0"/>
-        <circle cx="9" cy="15" r="1" fill="#f5c879"/><circle cx="25" cy="13" r="1" fill="#f5c879"/>
-      </svg>`;
+      treat.innerHTML = chosenTreat.svg;
       $("treat-layer").appendChild(treat);
-      const treatItem = { element: treat, kittenIndex: index };
+      
+      const treatItem = { element: treat, kittenIndex: index, treatType: chosenTreat };
       treats.push(treatItem);
       setTimeout(() => treat.classList.remove("is-new"), 750);
       if (!activeTreat) startTreatEating(treatItem);
