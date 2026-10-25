@@ -49,7 +49,7 @@
       letter-spacing: -.065em;
     }
     h1 span { color: #df879c; }
-    .intro { margin: 14px 0 28px; color: var(--muted); font-size: clamp(1rem, 2.7vw, 1.15rem); }
+    .intro { margin: 14px 0 24px; color: var(--muted); font-size: clamp(1rem, 2.7vw, 1.15rem); }
     .scene {
       position: relative;
       display: grid;
@@ -68,6 +68,36 @@
     .cloud::before { left: 12px; } .cloud::after { left: 31px; width: 18px; height: 18px; }
     .sparkle { position: absolute; color: #e7b96d; font-size: 22px; animation: twinkle 2.4s ease-in-out infinite; }
     .sparkle.one { top: 33%; left: 16%; } .sparkle.two { top: 49%; right: 15%; animation-delay: .8s; }
+    
+    /* Floating XP Notification */
+    .xp-float {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 6px 16px;
+      background: #fff6e5;
+      border: 2px solid #ebc983;
+      border-radius: 999px;
+      color: #9c6c22;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: .05em;
+      pointer-events: none;
+      z-index: 10;
+      box-shadow: 0 4px 14px rgba(184, 137, 72, 0.25);
+      opacity: 0;
+    }
+    .xp-float.is-floating {
+      animation: xp-float-up 1.15s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    @keyframes xp-float-up {
+      0% { opacity: 0; transform: translate(-50%, 0) scale(0.8); }
+      20% { opacity: 1; transform: translate(-50%, -18px) scale(1.18); }
+      75% { opacity: 1; transform: translate(-50%, -42px) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -62px) scale(0.9); }
+    }
+
     .treat-layer { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
     .treat-piece { position: absolute; bottom: 51px; width: 34px; opacity: 1; filter: drop-shadow(0 3px 1px #84664a30); }
     .treat-piece svg { width: 100%; }
@@ -137,8 +167,43 @@
     .kitten-wrap:hover .nuzzle-mouth, .kitten-wrap:focus-visible .nuzzle-mouth { opacity: 1; }
     .purr { transform-origin: 150px 258px; animation: purr 2.5s ease-in-out infinite; }
     .kitten-wrap:hover .purr, .kitten-wrap:focus-visible .purr { animation-duration: .42s; }
-    .caption { position: absolute; z-index: 2; bottom: 17px; left: 0; right: 0; color: #a39391; font-size: 12px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; pointer-events: none; }
-    .controls { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 28px; }
+
+    /* Caption & Kitten Bond Badge */
+    .caption {
+      position: absolute;
+      z-index: 2;
+      bottom: 12px;
+      left: 0;
+      right: 0;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .caption-name {
+      color: #a39391;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+    .kitten-bond-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 12px;
+      border-radius: 999px;
+      background: #fff8f0;
+      border: 1.5px solid #ebd9ca;
+      color: #a86c61;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      box-shadow: 0 2px 0 #ebd9ca;
+    }
+
+    .controls { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 24px; }
     button {
       min-height: 46px; padding: 0 19px; border: 2px solid #e9d6c8; border-radius: 14px;
       color: var(--ink); background: #fffdf8; font: inherit; font-weight: 800; cursor: pointer;
@@ -149,10 +214,107 @@
     button:disabled { opacity: .55; cursor: not-allowed; transform: none !important; box-shadow: 0 4px 0 #e9d6c8 !important; }
     button:focus-visible, .kitten-wrap:focus-visible { outline: 3px solid #dc91a2; outline-offset: 5px; }
     .timer { min-width: 72px; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+    
+    /* User Experience & Level Card */
+    .xp-section {
+      width: min(100%, 460px);
+      margin: 20px auto 0;
+      padding: 13px 18px;
+      border: 2px solid #f0dfcf;
+      border-radius: 18px;
+      background: #fffdf8;
+      box-shadow: 0 4px 0 #eeddcf;
+      text-align: left;
+    }
+    .xp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: #795d66;
+      margin-bottom: 7px;
+    }
+    .xp-bar-track {
+      position: relative;
+      height: 12px;
+      background: #f7ece1;
+      border: 2px solid #e8d5c4;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .xp-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f5b0bd, #df879c);
+      border-radius: 999px;
+      transition: width 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .xp-subtitle {
+      margin-top: 7px;
+      font-size: 12px;
+      color: #9c888d;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .xp-unlocked-badge {
+      color: #b7566e;
+      font-weight: 800;
+    }
+
+    /* Treat Controls & Menu */
     .sound-row { margin-top: 18px; }
     #treat { border-color: #ebc983; background: #fff5d9; box-shadow: 0 4px 0 #e7d4aa; }
     #treat:hover { background: #ffedc1; }
     #treat[aria-pressed="true"] { background: #ffe9b2; }
+
+    /* Treat Choice Menu (Unlocked at 100 XP) */
+    .treat-menu {
+      margin-top: 4px;
+    }
+    .treat-menu-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #b3566e;
+      margin: 0 0 10px;
+    }
+    .treat-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+    .treat-choice-btn {
+      min-height: 44px;
+      padding: 0 15px;
+      border: 2px solid #ebc983;
+      border-radius: 13px;
+      background: #fff8e8;
+      box-shadow: 0 4px 0 #e5d1a8;
+      font-size: 13px;
+      font-weight: 800;
+      color: #5c473c;
+      cursor: pointer;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+    }
+    .treat-choice-btn:hover {
+      background: #ffefcb;
+    }
+    .treat-choice-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #e5d1a8;
+    }
+    .treat-choice-btn.random-btn {
+      border-color: #e4b5c2;
+      background: #fff0f3;
+      color: #8c4c5e;
+      box-shadow: 0 4px 0 #e4c2cb;
+    }
+    .treat-choice-btn.random-btn:hover {
+      background: #ffe3e9;
+    }
+
     .treat-note { min-height: 1.2em; margin: 8px 0 0; color: #a47e52; font-size: 13px; font-weight: 600; }
     #sound-toggle[aria-pressed="true"] { border-color: #e3b0ba; background: #fff1ed; color: #9b596a; }
     .hint { margin: 23px 0 0; color: #a39291; font-size: 13px; }
@@ -335,6 +497,7 @@
     <section class="scene" id="scene" aria-label="A changing pixel kitten">
       <div class="sun" aria-hidden="true"></div><div class="cloud" aria-hidden="true"></div>
       <span class="sparkle one" aria-hidden="true">✦</span><span class="sparkle two" aria-hidden="true">✧</span>
+      <div class="xp-float" id="xp-float">+5 XP ♡</div>
       <div class="kitten-wrap" id="kitten" role="button" tabindex="0" aria-label="Nuzzle the kitten">
         <svg viewBox="0 0 300 300" role="img" aria-labelledby="cat-title cat-desc" xmlns="http://www.w3.org/2000/svg">
           <title id="cat-title">A pixel kitten</title><desc id="cat-desc">A small, soft-looking pixel kitten. Hover or focus to make it nuzzle.</desc>
@@ -358,7 +521,10 @@
         </svg>
       </div>
       <div class="treat-layer" id="treat-layer" aria-hidden="true"></div>
-      <div class="caption" id="cat-name" aria-live="polite">Mochi · the daydreamer</div>
+      <div class="caption">
+        <div class="caption-name" id="cat-name" aria-live="polite">Mochi · the daydream cartographer</div>
+        <div class="kitten-bond-badge" id="kitten-bond">♡ Mochi's Bond: 0 XP · New Friend</div>
+      </div>
     </section>
 
     <div class="controls">
@@ -366,7 +532,38 @@
       <span class="timer" id="timer" aria-live="polite">Next in 15s</span>
       <button id="next" type="button">Next kitten <span aria-hidden="true">→</span></button>
     </div>
-    <div class="sound-row"><button id="treat" type="button" aria-pressed="false">♡ Give a little treat</button><p class="treat-note" id="treat-note" aria-live="polite"></p></div>
+
+    <!-- User Experience & Caregiver Progress Card -->
+    <div class="xp-section">
+      <div class="xp-header">
+        <span id="xp-status">Level 1 Caregiver</span>
+        <span id="user-xp-text">0 / 100 XP</span>
+      </div>
+      <div class="xp-bar-track" aria-hidden="true">
+        <div class="xp-bar-fill" id="user-xp-fill" style="width: 0%;"></div>
+      </div>
+      <div class="xp-subtitle" id="treat-lock-hint">
+        🔒 Reach 100 XP to unlock the Treat Choice Menu (currently 0/100)
+      </div>
+    </div>
+
+    <!-- Treat Controls & Choice Menu -->
+    <div class="sound-row">
+      <div id="treat-single-wrap">
+        <button id="treat" type="button" aria-pressed="false">♡ Give a little treat (+5 XP)</button>
+      </div>
+      <div class="treat-menu" id="treat-menu" style="display: none;">
+        <p class="treat-menu-title">✨ Treat Menu Unlocked! Choose what to serve:</p>
+        <div class="treat-buttons">
+          <button class="treat-choice-btn" data-treat="wetFood" type="button">🥫 Wet Food</button>
+          <button class="treat-choice-btn" data-treat="fish" type="button">🐟 Little Fish</button>
+          <button class="treat-choice-btn" data-treat="mouse" type="button">🐭 Toy Mouse</button>
+          <button class="treat-choice-btn random-btn" data-treat="random" type="button">🎲 Surprise Me</button>
+        </div>
+      </div>
+      <p class="treat-note" id="treat-note" aria-live="polite"></p>
+    </div>
+
     <div class="sound-row"><button id="sound-toggle" type="button" aria-pressed="false">♫ Turn sounds on</button></div>
     <p class="hint" id="hint">Turn on sounds for kitten voices and a gentle flute tune ♡</p>
   </main>
@@ -375,7 +572,7 @@
       {
         id: "wetFood",
         name: "gourmet wet food",
-        eatingText: "is happily slurping up gourmet wet food!",
+        eatingText: "is happily slurping up gourmet wet food! (+5 XP)",
         svg: `<svg viewBox="0 0 34 26" xmlns="http://www.w3.org/2000/svg">
   <ellipse cx="17" cy="22" rx="12" ry="2.5" fill="#a89582" opacity=".28"/>
   <rect x="7" y="11" width="20" height="9" rx="2" fill="#d4959f" stroke="#b46f7c" stroke-width="1.5"/>
@@ -389,7 +586,7 @@
       {
         id: "fish",
         name: "a fresh little fish",
-        eatingText: "is joyfully munching on a tasty little fish!",
+        eatingText: "is joyfully munching on a tasty little fish! (+5 XP)",
         svg: `<svg viewBox="0 0 34 26" xmlns="http://www.w3.org/2000/svg">
   <ellipse cx="17" cy="22" rx="12" ry="2.5" fill="#a89582" opacity=".28"/>
   <path d="M6 8 L12 13 L6 18 Z" fill="#75b5c9" stroke="#4a8b9f" stroke-width="1.5"/>
@@ -403,7 +600,7 @@
       {
         id: "mouse",
         name: "a toy mouse",
-        eatingText: "is eagerly batting and chasing the toy mouse!",
+        eatingText: "is eagerly batting and chasing the toy mouse! (+5 XP)",
         svg: `<svg viewBox="0 0 34 26" xmlns="http://www.w3.org/2000/svg">
   <ellipse cx="17" cy="22" rx="12" ry="2.5" fill="#a89582" opacity=".28"/>
   <path d="M7 16 Q4 13 6 10 Q8 8 5 6" stroke="#e3a6b5" stroke-width="1.5" fill="none" stroke-linecap="round"/>
@@ -550,6 +747,28 @@
     const $ = (id) => document.getElementById(id);
     const NS = "http://www.w3.org/2000/svg";
 
+    // Experience (XP) Persistence
+    const STORAGE_KEY_USER_XP = "little_nuzzle_user_xp";
+    const STORAGE_KEY_KITTEN_XP = "little_nuzzle_kitten_xp";
+
+    function loadUserXP() {
+      try { return parseInt(localStorage.getItem(STORAGE_KEY_USER_XP) || "0", 10) || 0; }
+      catch { return 0; }
+    }
+    function saveUserXP(val) {
+      try { localStorage.setItem(STORAGE_KEY_USER_XP, String(val)); } catch {}
+    }
+    function loadKittenXP() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY_KITTEN_XP) || "{}"); }
+      catch { return {}; }
+    }
+    function saveKittenXP(map) {
+      try { localStorage.setItem(STORAGE_KEY_KITTEN_XP, JSON.stringify(map)); } catch {}
+    }
+
+    let userXP = loadUserXP();
+    let kittenXPMap = loadKittenXP();
+
     let index = 0;
     let seconds = 15;
     let isTimerPaused = true;
@@ -565,9 +784,59 @@
     let treatTimer;
     let treatStopTimer;
     let postSnackTimer;
+    let floatXpTimer;
     let activeTreat;
     let lastEatenTreat;
     const treats = [];
+
+    function updateXPDisplay() {
+      // User XP progress towards 100 XP
+      const progressPercent = Math.min(100, (userXP / 100) * 100);
+      $("user-xp-text").textContent = `${userXP} / 100 XP`;
+      $("user-xp-fill").style.width = `${progressPercent}%`;
+
+      const unlocked = userXP >= 100;
+      if (unlocked) {
+        $("xp-status").innerHTML = '<span class="xp-unlocked-badge">✨ Treat Menu Unlocked! (100+ XP)</span>';
+        $("treat-lock-hint").style.display = "none";
+        $("treat-menu").style.display = "block";
+        $("treat-single-wrap").style.display = "none";
+      } else {
+        $("xp-status").textContent = "Level 1 Caregiver";
+        $("treat-lock-hint").style.display = "block";
+        $("treat-lock-hint").textContent = `🔒 Reach 100 XP to unlock the Treat Choice Menu (currently ${userXP}/100)`;
+        $("treat-menu").style.display = "none";
+        $("treat-single-wrap").style.display = "block";
+      }
+
+      // Current Kitten Bond XP
+      const catName = kittens[index].name.split(" · ")[0];
+      const catPoints = kittenXPMap[catName] || 0;
+      let bondTitle = "New Friend";
+      if (catPoints >= 100) bondTitle = "Soul Bestie ♡";
+      else if (catPoints >= 50) bondTitle = "Trusted Confidant";
+      else if (catPoints >= 20) bondTitle = "Cozy Companion";
+
+      $("kitten-bond").textContent = `♡ ${catName}'s Bond: ${catPoints} XP · ${bondTitle}`;
+    }
+
+    function showFloatXP(text) {
+      const el = $("xp-float");
+      if (!el) return;
+      el.textContent = text;
+      el.classList.remove("is-floating");
+      void el.offsetWidth; // Force reflow
+      el.classList.add("is-floating");
+      clearTimeout(floatXpTimer);
+      floatXpTimer = setTimeout(() => {
+        el.classList.remove("is-floating");
+      }, 1200);
+    }
+
+    function setTreatButtonsDisabled(disabled) {
+      if ($("treat")) $("treat").disabled = disabled;
+      document.querySelectorAll(".treat-choice-btn").forEach(btn => btn.disabled = disabled);
+    }
 
     function rect(parent, x, y, w, h, fill, extra = {}) {
       const el = document.createElementNS(NS, "rect");
@@ -644,13 +913,13 @@
       treats.length = 0;
       $("treat-layer").replaceChildren();
       $("scene").classList.remove("nibbling");
-      $("treat").setAttribute("aria-pressed", "false");
+      if ($("treat")) $("treat").setAttribute("aria-pressed", "false");
       $("treat-note").textContent = "";
 
       // Disable buttons during transition
       $("prev").disabled = true;
       $("next").disabled = true;
-      $("treat").disabled = true;
+      setTreatButtonsDisabled(true);
 
       const kittenEl = $("kitten");
       // Roll up into a ball and roll away animation
@@ -664,6 +933,7 @@
         draw(cat);
         $("cat-name").textContent = cat.name;
         $("cat-title").textContent = cat.name;
+        updateXPDisplay();
 
         // Walk in trotting animation
         kittenEl.className = "kitten-wrap walking-in is-animating";
@@ -674,7 +944,7 @@
           isTransitioning = false;
           $("prev").disabled = false;
           $("next").disabled = false;
-          $("treat").disabled = false;
+          setTreatButtonsDisabled(false);
 
           // Start the 15-second timer ONLY after walk-in is completely finished
           seconds = 15;
@@ -835,7 +1105,7 @@
       isPostSnack = true;
       // Pause 15s timer during post-snack animation
       isTimerPaused = true;
-      $("treat").disabled = true;
+      setTreatButtonsDisabled(true);
 
       const currentCat = kittens[index];
       const treatKey = eatenTreat?.id || "wetFood";
@@ -863,7 +1133,7 @@
     function finishPostSnack() {
       isPostSnack = false;
       $("kitten").className = "kitten-wrap";
-      $("treat").disabled = false;
+      setTreatButtonsDisabled(false);
 
       // If the 15-second timer ran out during post-snack animations, have the animation finish,
       // then proceed to the rolling away animation.
@@ -882,7 +1152,7 @@
       isEating = true;
       // The 15-second timer is NOT paused during the eating of the snack!
       $("scene").classList.add("nibbling");
-      $("treat").setAttribute("aria-pressed", "true");
+      if ($("treat")) $("treat").setAttribute("aria-pressed", "true");
       const catName = kittens[index].name.split(" · ")[0];
       $("treat-note").textContent = `${catName} ${treat.treatType.eatingText}`;
 
@@ -904,7 +1174,7 @@
           lastEatenTreat = treat.treatType;
           activeTreat = undefined;
           $("scene").classList.remove("nibbling");
-          $("treat").setAttribute("aria-pressed", "false");
+          if ($("treat")) $("treat").setAttribute("aria-pressed", "false");
           isEating = false;
 
           if (treats.length) {
@@ -918,13 +1188,28 @@
       }, 4500);
     }
 
-    $("treat").addEventListener("click", () => {
+    function giveTreat(chosenTreatId = "random") {
       if (isTransitioning || isPostSnack || treats.length >= 3) return;
       if (!soundEnabled) $("sound-toggle").click();
       
-      // Randomly choose 1 of the 3 treats: wet food, fish, or mouse!
-      const chosenTreat = treatTypes[Math.floor(Math.random() * treatTypes.length)];
-      
+      let chosenTreat;
+      if (chosenTreatId === "random") {
+        chosenTreat = treatTypes[Math.floor(Math.random() * treatTypes.length)];
+      } else {
+        chosenTreat = treatTypes.find(t => t.id === chosenTreatId) || treatTypes[0];
+      }
+
+      // Award +5 XP to user and +5 XP to current kitten!
+      userXP += 5;
+      saveUserXP(userXP);
+
+      const catName = kittens[index].name.split(" · ")[0];
+      kittenXPMap[catName] = (kittenXPMap[catName] || 0) + 5;
+      saveKittenXP(kittenXPMap);
+
+      updateXPDisplay();
+      showFloatXP("+5 XP ♡");
+
       const treat = document.createElement("div");
       treat.className = "treat-piece is-new";
       treat.style.left = ["42%", "54%", "66%"][treats.length];
@@ -935,6 +1220,17 @@
       treats.push(treatItem);
       setTimeout(() => treat.classList.remove("is-new"), 750);
       if (!activeTreat) startTreatEating(treatItem);
+    }
+
+    if ($("treat")) {
+      $("treat").addEventListener("click", () => giveTreat("random"));
+    }
+
+    document.querySelectorAll(".treat-choice-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const treatId = e.currentTarget.getAttribute("data-treat") || "random";
+        giveTreat(treatId);
+      });
     });
 
     $("sound-toggle").addEventListener("click", async () => {
@@ -992,20 +1288,22 @@
     draw(kittens[0]);
     $("cat-name").textContent = kittens[0].name;
     $("cat-title").textContent = kittens[0].name;
+    updateXPDisplay();
+
     $("kitten").className = "kitten-wrap walking-in is-animating";
     $("timer").textContent = "Arriving...";
     isTimerPaused = true;
     isTransitioning = true;
     $("prev").disabled = true;
     $("next").disabled = true;
-    $("treat").disabled = true;
+    setTreatButtonsDisabled(true);
 
     setTimeout(() => {
       $("kitten").className = "kitten-wrap";
       isTransitioning = false;
       $("prev").disabled = false;
       $("next").disabled = false;
-      $("treat").disabled = false;
+      setTreatButtonsDisabled(false);
       seconds = 15;
       $("timer").textContent = `Next in ${seconds}s`;
       isTimerPaused = false;
