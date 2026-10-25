@@ -73,8 +73,33 @@
     .treat-piece svg { width: 100%; }
     .treat-piece.is-new { animation: treat-toss .72s cubic-bezier(.2,.7,.25,1) forwards; }
     .treat-piece.is-eaten { animation: treat-eaten .32s ease-in forwards; }
+    
+    /* Kitten Base and Interaction */
     .kitten-wrap { position: relative; z-index: 1; width: min(78%, 310px); cursor: pointer; transform-origin: 50% 72%; transition: transform .25s ease; }
     .kitten-wrap:hover, .kitten-wrap:focus-visible { transform: translateY(-5px) scale(1.035); outline: none; }
+    .kitten-wrap.is-animating { pointer-events: none; }
+
+    /* Walk-in trotting animation */
+    .kitten-wrap.walking-in { animation: kitten-walk-in 1.25s cubic-bezier(.22, .75, .25, 1) forwards; pointer-events: none; }
+
+    /* Roll up into a ball and roll away */
+    .kitten-wrap.rolling-away { animation: kitten-roll-away 1.2s cubic-bezier(.4, 0, .2, 1) forwards; pointer-events: none; }
+    .kitten-wrap.rolling-away .head-group { transform: translateY(14px) scale(.92); }
+    .kitten-wrap.rolling-away .purr { opacity: 0; }
+    .kitten-wrap.rolling-away .eye { opacity: 0; }
+    .kitten-wrap.rolling-away .nuzzle-eyes { opacity: 1; }
+
+    /* Whimsical personality post-snack animations */
+    .kitten-wrap.action-belly { animation: kitten-belly 3s ease-in-out forwards; pointer-events: none; }
+    .kitten-wrap.action-curl { animation: kitten-curl 3s ease-in-out forwards; pointer-events: none; }
+    .kitten-wrap.action-hop { animation: kitten-hop 2.8s ease-in-out forwards; pointer-events: none; }
+    .kitten-wrap.action-float { animation: kitten-float 3s ease-in-out forwards; pointer-events: none; }
+    .kitten-wrap.action-bow { animation: kitten-bow 3s ease-in-out forwards; pointer-events: none; }
+
+    /* Joyful facial expression during animations */
+    .kitten-wrap.happy-face .eye, .kitten-wrap.happy-face .smile { opacity: 0; }
+    .kitten-wrap.happy-face .nuzzle-eyes, .kitten-wrap.happy-face .nuzzle-mouth { opacity: 1; }
+
     svg { display: block; width: 100%; height: auto; overflow: visible; image-rendering: pixelated; shape-rendering: crispEdges; }
     .cat { transform-origin: 150px 190px; transition: transform .35s cubic-bezier(.2,.8,.2,1); }
     .head-group { transform-origin: 150px 190px; }
@@ -98,6 +123,7 @@
     }
     button:hover { background: #fff1ed; }
     button:active { transform: translateY(3px); box-shadow: 0 1px 0 #e9d6c8; }
+    button:disabled { opacity: .55; cursor: not-allowed; transform: none !important; box-shadow: 0 4px 0 #e9d6c8 !important; }
     button:focus-visible, .kitten-wrap:focus-visible { outline: 3px solid #dc91a2; outline-offset: 5px; }
     .timer { min-width: 72px; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
     .sound-row { margin-top: 18px; }
@@ -112,6 +138,63 @@
     @keyframes treat-toss { 0% { opacity: 0; transform: translate(-115px, -145px) rotate(-170deg) scale(.7); } 12% { opacity: 1; } 70% { transform: translate(-18px, 7px) rotate(18deg) scale(1.08); } 86% { transform: translate(0, -5px) rotate(-8deg) scale(.96); } 100% { opacity: 1; transform: translate(0, 0) rotate(0) scale(1); } }
     @keyframes treat-eaten { to { opacity: 0; transform: translateY(5px) scale(.2) rotate(25deg); } }
     @keyframes nibble { 0%,100% { transform: translateY(0) rotate(0); } 25%,68% { transform: translateY(18px) rotate(5deg); } 82% { transform: translateY(13px) rotate(2deg); } }
+
+    /* Animation Keyframes */
+    @keyframes kitten-walk-in {
+      0% { opacity: 0; transform: translateX(-380px) translateY(0); }
+      15% { opacity: 1; }
+      28% { transform: translateX(-260px) translateY(-14px) rotate(-3deg); }
+      48% { transform: translateX(-160px) translateY(0) rotate(2deg); }
+      68% { transform: translateX(-75px) translateY(-10px) rotate(-2deg); }
+      86% { transform: translateX(-15px) translateY(0) rotate(1deg); }
+      100% { opacity: 1; transform: translateX(0) translateY(0) rotate(0deg); }
+    }
+    @keyframes kitten-roll-away {
+      0% { transform: translateX(0) translateY(0) rotate(0deg) scale(1); }
+      22% { transform: translateX(10px) translateY(12px) rotate(22deg) scale(0.85, 0.82); }
+      35% { transform: translateX(25px) translateY(16px) rotate(65deg) scale(0.8); }
+      100% { transform: translateX(440px) translateY(16px) rotate(740deg) scale(0.76); }
+    }
+    @keyframes kitten-belly {
+      0% { transform: translateY(0) rotate(0deg); }
+      20% { transform: translateY(-8px) rotate(170deg) scale(0.98); }
+      38% { transform: translateY(-14px) rotate(188deg) scale(1.02); }
+      58% { transform: translateY(-10px) rotate(172deg) scale(1.02); }
+      78% { transform: translateY(-14px) rotate(186deg) scale(1.01); }
+      90% { transform: translateY(-4px) rotate(260deg) scale(0.98); }
+      100% { transform: translateY(0) rotate(360deg) scale(1); }
+    }
+    @keyframes kitten-curl {
+      0% { transform: translateY(0) scale(1); }
+      20% { transform: translateY(12px) scale(1.08, 0.88); }
+      40% { transform: translateY(8px) scale(1.04, 0.93); }
+      60% { transform: translateY(14px) scale(1.1, 0.86); }
+      80% { transform: translateY(10px) scale(1.06, 0.9); }
+      100% { transform: translateY(0) scale(1); }
+    }
+    @keyframes kitten-hop {
+      0% { transform: translateY(0) scale(1) rotate(0deg); }
+      15% { transform: translateY(10px) scale(1.1, 0.88) rotate(0deg); }
+      30% { transform: translateY(-26px) scale(0.92, 1.08) rotate(-4deg); }
+      45% { transform: translateY(6px) scale(1.06, 0.92) rotate(2deg); }
+      60% { transform: translateY(-28px) scale(0.92, 1.08) rotate(4deg); }
+      80% { transform: translateY(8px) scale(1.08, 0.9) rotate(-1deg); }
+      100% { transform: translateY(0) scale(1) rotate(0deg); }
+    }
+    @keyframes kitten-float {
+      0% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-22px) rotate(-3deg) scale(1.04); }
+      50% { transform: translateY(-28px) rotate(3deg) scale(1.05); }
+      75% { transform: translateY(-16px) rotate(-2deg) scale(1.03); }
+      100% { transform: translateY(0) rotate(0deg) scale(1); }
+    }
+    @keyframes kitten-bow {
+      0% { transform: rotate(0deg) scale(1); }
+      40% { transform: rotate(360deg) translateY(-8px) scale(1.04); }
+      65% { transform: rotate(360deg) translateY(12px) scale(1.04, 0.92); }
+      85% { transform: rotate(360deg) translateY(10px) scale(1.02, 0.94); }
+      100% { transform: rotate(360deg) translateY(0) scale(1); }
+    }
     @media (max-width: 480px) { .scene { min-height: 320px; border-radius: 22px; } .sun { width: 42px; height: 42px; } .cloud { transform: scale(.8); transform-origin: top left; } }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
   </style>
@@ -155,28 +238,33 @@
   </main>
   <script>
     const kittens = [
-      { name: "Mochi · the daydream cartographer", fur: "#f3c7bd", shade: "#df9f9c", light: "#ffe5d9", inner: "#c77883", nose: "#d8798d", eyes: "#57434b", accent: "#d9889b", kind: "bow", voice: { pitch: [620, 770], length: [0.48, 0.72], doubleChance: 0.08, purrChance: 0.48, purrPitch: 118 } },
-      { name: "Pippin · the cloud's assistant", fur: "#e8e2d8", shade: "#c9c0b8", light: "#fff8e9", inner: "#db9e9e", nose: "#cf8291", eyes: "#536b72", accent: "#a8c8c2", kind: "scarf", voice: { pitch: [740, 940], length: [0.24, 0.38], doubleChance: 0.7, purrChance: 0.2, purrPitch: 142 } },
-      { name: "Peaches · the sunbeam collector", fur: "#efbd7e", shade: "#d89659", light: "#ffe2a8", inner: "#c97875", nose: "#ce7785", eyes: "#654638", accent: "#e9af67", kind: "flower", voice: { pitch: [560, 830], length: [0.28, 0.52], doubleChance: 0.42, purrChance: 0.36, purrPitch: 132 } },
-      { name: "Biscuit · the blanket architect", fur: "#b8a0c8", shade: "#9478aa", light: "#e0cbe9", inner: "#ce91a2", nose: "#c9758c", eyes: "#51465f", accent: "#ddabc3", kind: "hat", voice: { pitch: [360, 510], length: [0.52, 0.82], doubleChance: 0.12, purrChance: 0.72, purrPitch: 104 } },
-      { name: "Juniper · the fern detective", fur: "#b7cba8", shade: "#849d7c", light: "#e2edcf", inner: "#c98791", nose: "#bd7183", eyes: "#435c4a", accent: "#8eaf86", kind: "flower", voice: { pitch: [510, 680], length: [0.35, 0.62], doubleChance: 0.25, purrChance: 0.55, purrPitch: 112 } },
-      { name: "Marmalade · tiny train conductor", fur: "#e9a66e", shade: "#bf704d", light: "#ffdfb4", inner: "#c87979", nose: "#bd6276", eyes: "#62443b", accent: "#bb6570", kind: "hat", voice: { pitch: [430, 590], length: [0.38, 0.58], doubleChance: 0.62, purrChance: 0.31, purrPitch: 126 } },
-      { name: "Tinsel · the midnight astronomer", fur: "#8f9fbe", shade: "#626f96", light: "#d8def1", inner: "#d29bad", nose: "#c57c96", eyes: "#3b4562", accent: "#f0d28c", kind: "bow", voice: { pitch: [690, 860], length: [0.3, 0.52], doubleChance: 0.18, purrChance: 0.66, purrPitch: 108 } },
-      { name: "Pickle · champion puddle inspector", fur: "#c7b66f", shade: "#928747", light: "#f2e6a9", inner: "#c17d87", nose: "#b9697b", eyes: "#50533b", accent: "#88aaa1", kind: "scarf", voice: { pitch: [390, 570], length: [0.48, 0.7], doubleChance: 0.44, purrChance: 0.4, purrPitch: 116 } },
-      { name: "Velvet · the opera-house usher", fur: "#bb8298", shade: "#885c79", light: "#f0c9d1", inner: "#e3a4a7", nose: "#ca718b", eyes: "#523c54", accent: "#e2bf74", kind: "bow", voice: { pitch: [540, 760], length: [0.58, 0.86], doubleChance: 0.16, purrChance: 0.78, purrPitch: 98 } },
-      { name: "Nori · the brave teacup sailor", fur: "#768f92", shade: "#506d75", light: "#c9ded4", inner: "#d19aa4", nose: "#c8778b", eyes: "#344b54", accent: "#e1b56e", kind: "scarf", voice: { pitch: [620, 820], length: [0.26, 0.48], doubleChance: 0.76, purrChance: 0.26, purrPitch: 136 } },
-      { name: "Dumpling · the nap-time philosopher", fur: "#e2c49e", shade: "#b69777", light: "#fff0d4", inner: "#d49ca0", nose: "#c87b88", eyes: "#5b4d45", accent: "#b9a6c8", kind: "hat", voice: { pitch: [330, 470], length: [0.62, 0.92], doubleChance: 0.08, purrChance: 0.86, purrPitch: 92 } },
-      { name: "Fable · the library's quiet dragon", fur: "#a99ac4", shade: "#776c9c", light: "#e4d8ed", inner: "#d094a5", nose: "#c2738b", eyes: "#49415f", accent: "#c78ca2", kind: "flower", voice: { pitch: [470, 660], length: [0.46, 0.72], doubleChance: 0.32, purrChance: 0.57, purrPitch: 110 } },
-      { name: "Waffles · the breakfast magician", fur: "#d49c65", shade: "#a86e48", light: "#f7d49b", inner: "#c97d7c", nose: "#c56c80", eyes: "#594235", accent: "#f2d381", kind: "bow", voice: { pitch: [580, 790], length: [0.28, 0.5], doubleChance: 0.7, purrChance: 0.39, purrPitch: 124 } },
-      { name: "Saffron · the tiny weather witch", fur: "#d9adbd", shade: "#aa829b", light: "#f5dce0", inner: "#c27b8d", nose: "#bd6c80", eyes: "#59465a", accent: "#e8c26d", kind: "hat", voice: { pitch: [720, 960], length: [0.22, 0.4], doubleChance: 0.55, purrChance: 0.34, purrPitch: 140 } },
-      { name: "Cricket · the pocket-sized drummer", fur: "#9eb6a0", shade: "#6e8a78", light: "#d8e8cd", inner: "#ce8c96", nose: "#c06f82", eyes: "#3d5949", accent: "#dca8a5", kind: "scarf", voice: { pitch: [480, 700], length: [0.2, 0.3], doubleChance: 0.9, purrChance: 0.22, purrPitch: 132 } },
-      { name: "Bluebell · the moonlit mail carrier", fur: "#a8c4d5", shade: "#718fa9", light: "#e0eff0", inner: "#d69aa4", nose: "#c7798d", eyes: "#40596a", accent: "#ebcd83", kind: "flower", voice: { pitch: [650, 880], length: [0.34, 0.6], doubleChance: 0.35, purrChance: 0.61, purrPitch: 106 } }
+      { name: "Mochi · the daydream cartographer", fur: "#f3c7bd", shade: "#df9f9c", light: "#ffe5d9", inner: "#c77883", nose: "#d8798d", eyes: "#57434b", accent: "#d9889b", kind: "bow", voice: { pitch: [620, 770], length: [0.48, 0.72], doubleChance: 0.08, purrChance: 0.48, purrPitch: 118 }, postSnack: { type: "float", text: "Mochi floats into a warm, starry daydream..." } },
+      { name: "Pippin · the cloud's assistant", fur: "#e8e2d8", shade: "#c9c0b8", light: "#fff8e9", inner: "#db9e9e", nose: "#cf8291", eyes: "#536b72", accent: "#a8c8c2", kind: "scarf", voice: { pitch: [740, 940], length: [0.24, 0.38], doubleChance: 0.7, purrChance: 0.2, purrPitch: 142 }, postSnack: { type: "hop", text: "Pippin chirps and does a bouncy cloud hop!" } },
+      { name: "Peaches · the sunbeam collector", fur: "#efbd7e", shade: "#d89659", light: "#ffe2a8", inner: "#c97875", nose: "#ce7785", eyes: "#654638", accent: "#e9af67", kind: "flower", voice: { pitch: [560, 830], length: [0.28, 0.52], doubleChance: 0.42, purrChance: 0.36, purrPitch: 132 }, postSnack: { type: "belly", text: "Peaches rolls onto their back to show a sunny tummy!" } },
+      { name: "Biscuit · the blanket architect", fur: "#b8a0c8", shade: "#9478aa", light: "#e0cbe9", inner: "#ce91a2", nose: "#c9758c", eyes: "#51465f", accent: "#ddabc3", kind: "hat", voice: { pitch: [360, 510], length: [0.52, 0.82], doubleChance: 0.12, purrChance: 0.72, purrPitch: 104 }, postSnack: { type: "curl", text: "Biscuit curls into a warm loaf and purrs softly!" } },
+      { name: "Juniper · the fern detective", fur: "#b7cba8", shade: "#849d7c", light: "#e2edcf", inner: "#c98791", nose: "#bd7183", eyes: "#435c4a", accent: "#8eaf86", kind: "flower", voice: { pitch: [510, 680], length: [0.35, 0.62], doubleChance: 0.25, purrChance: 0.55, purrPitch: 112 }, postSnack: { type: "hop", text: "Juniper does a curious victory leap through the ferns!" } },
+      { name: "Marmalade · tiny train conductor", fur: "#e9a66e", shade: "#bf704d", light: "#ffdfb4", inner: "#c87979", nose: "#bd6276", eyes: "#62443b", accent: "#bb6570", kind: "hat", voice: { pitch: [430, 590], length: [0.38, 0.58], doubleChance: 0.62, purrChance: 0.31, purrPitch: 126 }, postSnack: { type: "bow", text: "Marmalade gives a proud little conductor's bow!" } },
+      { name: "Tinsel · the midnight astronomer", fur: "#8f9fbe", shade: "#626f96", light: "#d8def1", inner: "#d29bad", nose: "#c57c96", eyes: "#3b4562", accent: "#f0d28c", kind: "bow", voice: { pitch: [690, 860], length: [0.3, 0.52], doubleChance: 0.18, purrChance: 0.66, purrPitch: 108 }, postSnack: { type: "float", text: "Tinsel drifts dreamily, gazing at starry skies!" } },
+      { name: "Pickle · champion puddle inspector", fur: "#c7b66f", shade: "#928747", light: "#f2e6a9", inner: "#c17d87", nose: "#b9697b", eyes: "#50533b", accent: "#88aaa1", kind: "scarf", voice: { pitch: [390, 570], length: [0.48, 0.7], doubleChance: 0.44, purrChance: 0.4, purrPitch: 116 }, postSnack: { type: "hop", text: "Pickle splashes into a joyful little wiggle dance!" } },
+      { name: "Velvet · the opera-house usher", fur: "#bb8298", shade: "#885c79", light: "#f0c9d1", inner: "#e3a4a7", nose: "#ca718b", eyes: "#523c54", accent: "#e2bf74", kind: "bow", voice: { pitch: [540, 760], length: [0.58, 0.86], doubleChance: 0.16, purrChance: 0.78, purrPitch: 98 }, postSnack: { type: "bow", text: "Velvet gives a graceful, theatrical curtsy of thanks!" } },
+      { name: "Nori · the brave teacup sailor", fur: "#768f92", shade: "#506d75", light: "#c9ded4", inner: "#d19aa4", nose: "#c8778b", eyes: "#344b54", accent: "#e1b56e", kind: "scarf", voice: { pitch: [620, 820], length: [0.26, 0.48], doubleChance: 0.76, purrChance: 0.26, purrPitch: 136 }, postSnack: { type: "float", text: "Nori rocks gently like a happy little ship at sea!" } },
+      { name: "Dumpling · the nap-time philosopher", fur: "#e2c49e", shade: "#b69777", light: "#fff0d4", inner: "#d49ca0", nose: "#c87b88", eyes: "#5b4d45", accent: "#b9a6c8", kind: "hat", voice: { pitch: [330, 470], length: [0.62, 0.92], doubleChance: 0.08, purrChance: 0.86, purrPitch: 92 }, postSnack: { type: "belly", text: "Dumpling flops belly-up into deep nap-time bliss!" } },
+      { name: "Fable · the library's quiet dragon", fur: "#a99ac4", shade: "#776c9c", light: "#e4d8ed", inner: "#d094a5", nose: "#c2738b", eyes: "#49415f", accent: "#c78ca2", kind: "flower", voice: { pitch: [470, 660], length: [0.46, 0.72], doubleChance: 0.32, purrChance: 0.57, purrPitch: 110 }, postSnack: { type: "curl", text: "Fable curls up tight like a cozy little bookend!" } },
+      { name: "Waffles · the breakfast magician", fur: "#d49c65", shade: "#a86e48", light: "#f7d49b", inner: "#c97d7c", nose: "#c56c80", eyes: "#594235", accent: "#f2d381", kind: "bow", voice: { pitch: [580, 790], length: [0.28, 0.5], doubleChance: 0.7, purrChance: 0.39, purrPitch: 124 }, postSnack: { type: "bow", text: "Waffles does a magical little treat spin!" } },
+      { name: "Saffron · the tiny weather witch", fur: "#d9adbd", shade: "#aa829b", light: "#f5dce0", inner: "#c27b8d", nose: "#bd6c80", eyes: "#59465a", accent: "#e8c26d", kind: "hat", voice: { pitch: [720, 960], length: [0.22, 0.4], doubleChance: 0.55, purrChance: 0.34, purrPitch: 140 }, postSnack: { type: "float", text: "Saffron floats peacefully on a cozy warm breeze!" } },
+      { name: "Cricket · the pocket-sized drummer", fur: "#9eb6a0", shade: "#6e8a78", light: "#d8e8cd", inner: "#ce8c96", nose: "#c06f82", eyes: "#3d5949", accent: "#dca8a5", kind: "scarf", voice: { pitch: [480, 700], length: [0.2, 0.3], doubleChance: 0.9, purrChance: 0.22, purrPitch: 132 }, postSnack: { type: "hop", text: "Cricket taps out a joyful victory rhythm with happy hops!" } },
+      { name: "Bluebell · the moonlit mail carrier", fur: "#a8c4d5", shade: "#718fa9", light: "#e0eff0", inner: "#d69aa4", nose: "#c7798d", eyes: "#40596a", accent: "#ebcd83", kind: "flower", voice: { pitch: [650, 880], length: [0.34, 0.6], doubleChance: 0.35, purrChance: 0.61, purrPitch: 106 }, postSnack: { type: "belly", text: "Bluebell rolls over happily for moonlight belly rubs!" } }
     ];
     const $ = (id) => document.getElementById(id);
     const NS = "http://www.w3.org/2000/svg";
+
     let index = 0;
     let seconds = 15;
-    let switchTimer;
+    let isTimerPaused = true;
+    let isTransitioning = false;
+    let isEating = false;
+    let isPostSnack = false;
+
     let audioContext;
     let soundEnabled = false;
     let lastMeowAt = 0;
@@ -184,8 +272,10 @@
     let melodyTimer;
     let treatTimer;
     let treatStopTimer;
+    let postSnackTimer;
     let activeTreat;
     const treats = [];
+
     function rect(parent, x, y, w, h, fill, extra = {}) {
       const el = document.createElementNS(NS, "rect");
       for (const [key, value] of Object.entries({ x, y, width: w, height: h, fill, ...extra })) el.setAttribute(key, value);
@@ -244,28 +334,74 @@
         path(acc, "M102 96l24-24h48l24 24v6h-96z", cat.accent); rect(acc, 96, 96, 108, 8, cat.shade); rect(acc, 126, 78, 42, 6, "#fff8ee", { opacity: ".65" });
       }
     }
-    function setKitten(nextIndex) {
-      index = (nextIndex + kittens.length) % kittens.length;
-      const cat = kittens[index];
-      draw(cat);
-      $("cat-name").textContent = cat.name;
-      $("cat-title").textContent = cat.name;
-      seconds = 15;
-      $("timer").textContent = `Next in ${seconds}s`;
-      clearInterval(switchTimer);
+
+    function transitionToKitten(targetIndex) {
+      if (isTransitioning) return;
+      isTransitioning = true;
+      isTimerPaused = true;
+
+      // Clean up any active snack or post-snack timers
       clearInterval(treatTimer);
       clearTimeout(treatStopTimer);
+      clearTimeout(postSnackTimer);
+      isEating = false;
+      isPostSnack = false;
       activeTreat = undefined;
-      treatTimer = undefined;
       treats.length = 0;
       $("treat-layer").replaceChildren();
       $("scene").classList.remove("nibbling");
       $("treat").setAttribute("aria-pressed", "false");
       $("treat-note").textContent = "";
-      switchTimer = setInterval(() => setKitten(index + 1), 15000);
+
+      // Disable buttons during transition
+      $("prev").disabled = true;
+      $("next").disabled = true;
+      $("treat").disabled = true;
+
+      const kittenEl = $("kitten");
+      // Roll up into a ball and roll away animation
+      kittenEl.className = "kitten-wrap rolling-away is-animating";
+      $("timer").textContent = "Rolling away...";
+
+      setTimeout(() => {
+        // Change to the new kitten
+        index = (targetIndex + kittens.length) % kittens.length;
+        const cat = kittens[index];
+        draw(cat);
+        $("cat-name").textContent = cat.name;
+        $("cat-title").textContent = cat.name;
+
+        // Walk in trotting animation
+        kittenEl.className = "kitten-wrap walking-in is-animating";
+        $("timer").textContent = "Arriving...";
+
+        setTimeout(() => {
+          kittenEl.className = "kitten-wrap";
+          isTransitioning = false;
+          $("prev").disabled = false;
+          $("next").disabled = false;
+          $("treat").disabled = false;
+
+          // Start the 15-second timer ONLY after walk-in is completely finished
+          seconds = 15;
+          $("timer").textContent = `Next in ${seconds}s`;
+          isTimerPaused = false;
+
+          // Cheerful hello meow when arriving
+          if (soundEnabled && audioContext?.state === "running") {
+            playMeow();
+          }
+        }, 1250);
+      }, 1200);
     }
-    $("next").addEventListener("click", () => setKitten(index + 1));
-    $("prev").addEventListener("click", () => setKitten(index - 1));
+
+    $("next").addEventListener("click", () => {
+      if (!isTransitioning) transitionToKitten(index + 1);
+    });
+    $("prev").addEventListener("click", () => {
+      if (!isTransitioning) transitionToKitten(index - 1);
+    });
+
     function randomBetween(min, max) { return min + Math.random() * (max - min); }
     function playMeowTone(pitch, length) {
       const now = audioContext.currentTime;
@@ -349,7 +485,7 @@
       filter.frequency.setValueAtTime(2400, startAt);
       breathLevel.gain.setValueAtTime(0.1, startAt);
       envelope.gain.setValueAtTime(0.0001, startAt);
-      envelope.gain.linearRampToValueAtTime(0.014, startAt + 0.09);
+      envelope.gain.linearRampToValueAtTime(0.014, startAt + 0.12);
       envelope.gain.setValueAtTime(0.014, startAt + length * 0.72);
       envelope.gain.exponentialRampToValueAtTime(0.0001, startAt + length);
       vibrato.connect(vibratoDepth);
@@ -359,20 +495,22 @@
       breathLevel.connect(filter);
       filter.connect(envelope);
       envelope.connect(musicBus);
-      flute.start(startAt); breath.start(startAt); vibrato.start(startAt);
-      flute.stop(startAt + length + 0.02);
-      breath.stop(startAt + length + 0.02);
-      vibrato.stop(startAt + length + 0.02);
+      flute.start(startAt);
+      breath.start(startAt);
+      vibrato.start(startAt);
+      flute.stop(startAt + length + 0.05);
+      breath.stop(startAt + length + 0.05);
+      vibrato.stop(startAt + length + 0.05);
     }
     function scheduleFlutePhrase() {
-      if (!soundEnabled || !audioContext || audioContext.state !== "running") return;
-      const phraseStart = audioContext.currentTime + 0.08;
+      if (!soundEnabled || !musicBus || !audioContext) return;
+      const startTime = audioContext.currentTime + 0.12;
       let offset = 0;
-      for (const [pitch, length] of flutePhrase) {
-        playFluteNote(pitch, length, phraseStart + offset);
+      flutePhrase.forEach(([pitch, length]) => {
+        playFluteNote(pitch, length, startTime + offset);
         offset += length + 0.08;
-      }
-      melodyTimer = setTimeout(scheduleFlutePhrase, 120000);
+      });
+      melodyTimer = setTimeout(scheduleFlutePhrase, (offset + 1.2) * 1000);
     }
     function playMeow() {
       if (!soundEnabled || !audioContext || audioContext.state !== "running") return;
@@ -397,18 +535,68 @@
         }, Math.max(300, length * (doubleMeow ? 920 : 680)));
       }
     }
+
+    function startPostSnackAnimation() {
+      if (isTransitioning) return;
+      isPostSnack = true;
+      // Pause 15s timer during post-snack animation
+      isTimerPaused = true;
+      $("treat").disabled = true;
+
+      const currentCat = kittens[index];
+      const post = currentCat.postSnack || { type: "belly", text: `${currentCat.name.split(" · ")[0]} is delightfully happy!` };
+      $("treat-note").textContent = post.text;
+
+      const kittenEl = $("kitten");
+      kittenEl.className = `kitten-wrap action-${post.type} happy-face is-animating`;
+
+      if (soundEnabled && audioContext?.state === "running") {
+        if (post.type === "belly" || post.type === "curl") {
+          playPurr(currentCat.voice.purrPitch, 2.0);
+        } else {
+          playMeow();
+          setTimeout(() => {
+            if (isPostSnack) playPurr(currentCat.voice.purrPitch, 1.2);
+          }, 650);
+        }
+      }
+
+      const duration = post.type === "hop" ? 2800 : 3000;
+      postSnackTimer = setTimeout(finishPostSnack, duration);
+    }
+
+    function finishPostSnack() {
+      isPostSnack = false;
+      $("kitten").className = "kitten-wrap";
+      $("treat").disabled = false;
+
+      // If the 15-second timer ran out during post-snack animations, have the animation finish,
+      // then proceed to the rolling away animation.
+      if (seconds <= 0) {
+        transitionToKitten(index + 1);
+      } else {
+        // Still has time left on the clock: unpause the timer and resume countdown!
+        isTimerPaused = false;
+        $("timer").textContent = `Next in ${seconds}s`;
+      }
+    }
+
     function startTreatEating(treat) {
       activeTreat = treat;
       treat.kittenIndex = index;
+      isEating = true;
+      // The 15-second timer is NOT paused during the eating of the snack!
       $("scene").classList.add("nibbling");
       $("treat").setAttribute("aria-pressed", "true");
       $("treat-note").textContent = `${kittens[index].name.split(" · ")[0]} is happily nibbling!`;
+
       treatTimer = setInterval(() => {
         if (soundEnabled && audioContext?.state === "running" && index === treat.kittenIndex) {
           playMeow();
           playPurr(kittens[treat.kittenIndex].voice.purrPitch, 0.82);
         }
       }, 900);
+
       treatStopTimer = setTimeout(() => {
         clearInterval(treatTimer);
         treatTimer = undefined;
@@ -420,13 +608,21 @@
           activeTreat = undefined;
           $("scene").classList.remove("nibbling");
           $("treat").setAttribute("aria-pressed", "false");
-          $("treat-note").textContent = `${kittens[index].name.split(" · ")[0]} says thanks!`;
-          if (treats.length) startTreatEating(treats[0]);
+          isEating = false;
+
+          if (treats.length) {
+            // Another treat is waiting in the bowl!
+            startTreatEating(treats[0]);
+          } else {
+            // Finished all treats: start whimsical post-snack animation!
+            startPostSnackAnimation();
+          }
         }, 320);
-      }, 5000);
+      }, 4500);
     }
+
     $("treat").addEventListener("click", () => {
-      if (treats.length >= 3) return;
+      if (isTransitioning || isPostSnack || treats.length >= 3) return;
       if (!soundEnabled) $("sound-toggle").click();
       const treat = document.createElement("div");
       treat.className = "treat-piece is-new";
@@ -443,6 +639,7 @@
       setTimeout(() => treat.classList.remove("is-new"), 750);
       if (!activeTreat) startTreatEating(treatItem);
     });
+
     $("sound-toggle").addEventListener("click", async () => {
       if (soundEnabled) {
         soundEnabled = false;
@@ -480,16 +677,57 @@
         ? "A gentle flute tune plays; hover for each kitten’s own hello ♡"
         : "Turn on sounds for kitten voices and a gentle flute tune ♡";
     });
+
     $("kitten").addEventListener("pointerenter", playMeow);
     $("kitten").addEventListener("focus", playMeow);
-    $("kitten").addEventListener("click", () => $("kitten").classList.toggle("loved"));
-    $("kitten").addEventListener("keydown", event => {
-      if (event.key === "Enter" || event.key === " ") { event.preventDefault(); $("kitten").classList.toggle("loved"); }
+    $("kitten").addEventListener("click", () => {
+      if (!isTransitioning && !isPostSnack) $("kitten").classList.toggle("loved");
     });
-    setKitten(0);
-    setInterval(() => {
-      seconds = seconds > 1 ? seconds - 1 : 15;
+    $("kitten").addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        if (!isTransitioning && !isPostSnack) $("kitten").classList.toggle("loved");
+      }
+    });
+
+    // Initial kitten walk-in on page load
+    index = 0;
+    draw(kittens[0]);
+    $("cat-name").textContent = kittens[0].name;
+    $("cat-title").textContent = kittens[0].name;
+    $("kitten").className = "kitten-wrap walking-in is-animating";
+    $("timer").textContent = "Arriving...";
+    isTimerPaused = true;
+    isTransitioning = true;
+    $("prev").disabled = true;
+    $("next").disabled = true;
+    $("treat").disabled = true;
+
+    setTimeout(() => {
+      $("kitten").className = "kitten-wrap";
+      isTransitioning = false;
+      $("prev").disabled = false;
+      $("next").disabled = false;
+      $("treat").disabled = false;
+      seconds = 15;
       $("timer").textContent = `Next in ${seconds}s`;
+      isTimerPaused = false;
+    }, 1250);
+
+    // 1-second interval loop that honors all timer rules
+    setInterval(() => {
+      if (isTimerPaused) return;
+
+      if (seconds > 0) {
+        seconds--;
+        $("timer").textContent = `Next in ${seconds}s`;
+      }
+
+      if (seconds <= 0) {
+        if (!isEating && !isPostSnack && !isTransitioning) {
+          transitionToKitten(index + 1);
+        }
+      }
     }, 1000);
   </script>
 </body>
